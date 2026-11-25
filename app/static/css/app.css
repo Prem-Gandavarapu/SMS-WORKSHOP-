@@ -1,3 +1,12 @@
+/* ===================================
+   GLOBAL / SHARED STYLES
+   =================================== */
+
+/* Inter font for the whole app */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
 /* Left sidebar in college navy */
 .sidebar {
     width: 100%;
@@ -53,7 +62,7 @@
 }
 
 .public-wrapper-wide {
-    max-width: 860px;
+    max-width: 900px;
 }
 
 /* Cards with rounded corners */
@@ -97,4 +106,341 @@
 .status-correction {
     background-color: #dbeafe;
     color: #1e40af;
+}
+
+
+/* ===================================
+   PUBLIC PAGE (Login / Register) STYLES
+   =================================== */
+
+/* Subtle gradient background for public pages */
+.public-body {
+    background: linear-gradient(135deg, #f0f4f8 0%, #e8ecf1 50%, #f5f3ef 100%);
+    min-height: 100vh;
+}
+
+/* Login card container */
+.login-card {
+    background: #ffffff;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    box-shadow:
+        0 4px 6px -1px rgba(11, 33, 80, 0.07),
+        0 10px 30px -5px rgba(11, 33, 80, 0.12),
+        0 1px 3px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(11, 33, 80, 0.06);
+}
+
+/* Left navy panel */
+.login-left {
+    background: linear-gradient(160deg, #0B2150 0%, #122d5e 60%, #0d2a5a 100%);
+    color: #ffffff;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle decorative circles on the left panel */
+.login-left::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(201, 162, 39, 0.08);
+    pointer-events: none;
+}
+
+.login-left::after {
+    content: '';
+    position: absolute;
+    bottom: -40px;
+    left: -40px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    pointer-events: none;
+}
+
+/* College badge on left panel */
+.login-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(201, 162, 39, 0.15);
+    color: #C9A227;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid rgba(201, 162, 39, 0.25);
+    margin-bottom: 1.75rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+/* Main heading */
+.login-heading {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+}
+
+.login-heading-gold {
+    color: #C9A227;
+}
+
+/* Description paragraph */
+.login-description {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.925rem;
+    line-height: 1.65;
+    margin-bottom: 1.5rem;
+}
+
+/* Feature pills row */
+.login-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.login-feature-pill {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Registration link at bottom of left panel */
+.login-register-link {
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.login-register-link p {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+}
+
+.login-register-anchor {
+    color: #C9A227;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.login-register-anchor:hover {
+    color: #dbb632;
+    text-decoration: underline;
+}
+
+/* Right form panel */
+.login-right {
+    padding: 2.5rem;
+}
+
+/* Sign In title */
+.login-form-title {
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: #0B2150;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.25rem;
+}
+
+.login-form-subtitle {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+/* Form labels */
+.login-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #374151;
+    margin-bottom: 0.4rem;
+}
+
+/* Input with icon wrapper */
+.login-input-wrapper {
+    position: relative;
+}
+
+.login-input-icon {
+    position: absolute;
+    top: 50%;
+    left: 0.85rem;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.login-input {
+    padding-left: 2.75rem !important;
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+    font-size: 0.925rem;
+    border: 1.5px solid #d1d5db;
+    border-radius: 0.6rem;
+    background-color: #f9fafb;
+    color: #111827;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.login-input::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+.login-input:focus {
+    border-color: #0B2150;
+    box-shadow: 0 0 0 3px rgba(11, 33, 80, 0.1);
+    background-color: #ffffff;
+    outline: none;
+}
+
+/* Login button */
+.login-btn {
+    background: linear-gradient(135deg, #0B2150 0%, #142e5c 100%);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 0.6rem;
+    letter-spacing: 0.02em;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 8px rgba(11, 33, 80, 0.25);
+}
+
+.login-btn:hover {
+    background: linear-gradient(135deg, #08193d 0%, #0d2347 100%);
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(11, 33, 80, 0.35);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(11, 33, 80, 0.2);
+}
+
+/* Footer text */
+.login-footer {
+    text-align: center;
+    color: #9ca3af;
+    font-size: 0.78rem;
+    margin-top: 2rem;
+    margin-bottom: 0;
+}
+
+/* Error alert styling */
+.login-right .alert-danger {
+    background-color: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+    border-radius: 0.6rem;
+    font-size: 0.875rem;
+}
+
+
+/* ===================================
+   RESPONSIVE ADJUSTMENTS
+   =================================== */
+
+/* Large desktops (1440px+) */
+@media (min-width: 1200px) {
+    .public-wrapper-wide {
+        max-width: 920px;
+    }
+
+    .login-left {
+        padding: 3rem;
+    }
+
+    .login-right {
+        padding: 3rem;
+    }
+
+    .login-heading {
+        font-size: 2.15rem;
+    }
+}
+
+/* Tablets and small desktops */
+@media (max-width: 767.98px) {
+    .public-wrapper-wide {
+        max-width: 480px;
+    }
+
+    /* Stack the panels vertically on mobile */
+    .login-left {
+        padding: 2rem 1.75rem;
+    }
+
+    .login-right {
+        padding: 2rem 1.75rem;
+    }
+
+    .login-heading {
+        font-size: 1.6rem;
+    }
+
+    .login-description {
+        font-size: 0.875rem;
+    }
+
+    .login-features {
+        display: none; /* Hide feature pills on mobile to save space */
+    }
+
+    .login-form-title {
+        font-size: 1.4rem;
+    }
+}
+
+/* Small phones (390px and below) */
+@media (max-width: 420px) {
+    .public-wrapper-wide {
+        max-width: 100%;
+    }
+
+    .login-left {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .login-right {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .login-heading {
+        font-size: 1.4rem;
+    }
+
+    .login-badge {
+        font-size: 0.72rem;
+        padding: 0.35rem 0.7rem;
+    }
+
+    .login-btn {
+        padding: 0.65rem 1rem;
+    }
+
+    .login-footer {
+        font-size: 0.72rem;
+    }
 }

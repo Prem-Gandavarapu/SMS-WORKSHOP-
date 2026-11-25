@@ -4,70 +4,121 @@
 {% block wrapper_class %}public-wrapper-wide{% endblock %}
 
 {% block content %}
-<div class="card shadow-sm overflow-hidden">
+<div class="login-card">
     <div class="row g-0">
-        <!-- Left Navy Info Panel -->
-        <div class="col-md-5 bg-navy text-white p-4 p-md-5 d-flex flex-column justify-content-between">
+        <!-- Left Navy Branding Panel -->
+        <div class="col-lg-5 col-md-5 login-left d-flex flex-column justify-content-between">
+            <!-- Top branding area -->
             <div>
-                <span class="badge role-badge mb-3">B.Tech Portal</span>
-                <h2 class="fw-bold mb-3">One login. Your own dashboard.</h2>
-                <p class="text-white-50 mb-0">
-                    Sign in with your college email or student roll number to access your portal.
+                <!-- College badge -->
+                <div class="login-badge">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c0 1.1 2.7 3 6 3s6-1.9 6-3v-5"/>
+                    </svg>
+                    <span>B.Tech College ERP</span>
+                </div>
+
+                <!-- Main heading -->
+                <h1 class="login-heading">
+                    One Login.<br>
+                    <span class="login-heading-gold">Your Academic World.</span>
+                </h1>
+
+                <!-- Description -->
+                <p class="login-description">
+                    Access dashboards, registrations, attendance,
+                    results and everything your college journey needs
+                    — all from a single secure portal.
                 </p>
+
+                <!-- Feature pills -->
+                <div class="login-features">
+                    <span class="login-feature-pill">📊 Dashboards</span>
+                    <span class="login-feature-pill">📝 Registration</span>
+                    <span class="login-feature-pill">📚 Academics</span>
+                    <span class="login-feature-pill">👨‍🏫 Mentoring</span>
+                </div>
             </div>
 
-            <div class="pt-4 mt-4 border-top border-secondary">
-                <p class="small mb-1 text-white-50">New first-year student?</p>
-                <a href="/register" class="link-warning fw-semibold text-decoration-none">
-                    New first-year student? Register here &rarr;
+            <!-- Bottom registration link -->
+            <div class="login-register-link">
+                <p class="mb-1">New first-year student?</p>
+                <a href="/register" class="login-register-anchor">
+                    Apply for admission here &rarr;
                 </a>
             </div>
         </div>
 
         <!-- Right Login Form Panel -->
-        <div class="col-md-7 bg-white p-4 p-md-5">
-            <h4 class="fw-bold mb-1">Sign In</h4>
-            <p class="text-muted small mb-4">Enter your credentials to continue.</p>
+        <div class="col-lg-7 col-md-7 login-right d-flex flex-column justify-content-center">
+            <!-- Sign In header -->
+            <div class="mb-4">
+                <h2 class="login-form-title">Sign In</h2>
+                <p class="login-form-subtitle">Enter your credentials to access your portal.</p>
+            </div>
 
+            <!-- Error message -->
             {% if error %}
-            <div class="alert alert-danger py-2" role="alert">
-                {{ error }}
+            <div class="alert alert-danger d-flex align-items-center py-2 px-3" role="alert">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" class="me-2 flex-shrink-0">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0-9.5a.75.75 0 0 0-.75.75v2.5a.75.75 0 0 0 1.5 0v-2.5A.75.75 0 0 0 8 5.5zm0 6a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5z"/>
+                </svg>
+                <span>{{ error }}</span>
             </div>
             {% endif %}
 
+            <!-- Login form -->
             <form method="post" action="/login">
                 <div class="mb-3">
-                    <label for="username" class="form-label fw-medium">
-                        Username (Email or Roll Number)
+                    <label for="username" class="form-label login-label">
+                        Username
                     </label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="username"
-                        name="username"
-                        value="{{ username or '' }}"
-                        placeholder="e.g. management@college.edu or 26CSE001"
-                        required
-                        autofocus
-                    >
+                    <div class="login-input-wrapper">
+                        <svg class="login-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <input
+                            type="text"
+                            class="form-control login-input"
+                            id="username"
+                            name="username"
+                            value="{{ username or '' }}"
+                            placeholder="e.g. management@college.edu or 26CSE001"
+                            required
+                            autofocus
+                        >
+                    </div>
                 </div>
 
                 <div class="mb-4">
-                    <label for="password" class="form-label fw-medium">Password</label>
-                    <input
-                        type="password"
-                        class="form-control"
-                        id="password"
-                        name="password"
-                        placeholder="Enter your password"
-                        required
-                    >
+                    <label for="password" class="form-label login-label">Password</label>
+                    <div class="login-input-wrapper">
+                        <svg class="login-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        <input
+                            type="password"
+                            class="form-control login-input"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            required
+                        >
+                    </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                <button type="submit" class="btn login-btn w-100">
                     Login
                 </button>
             </form>
+
+            <!-- Footer -->
+            <p class="login-footer">
+                &copy; 2026 Student Management System &middot; All rights reserved
+            </p>
         </div>
     </div>
 </div>
