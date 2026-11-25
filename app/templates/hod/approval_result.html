@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="alert alert-success fs-5 fw-semibold">
+    {{ student.full_name }} is now a student of {{ department.code }}
+</div>
+
+{% if warning %}
+<div class="alert alert-warning">
+    <strong>Note:</strong> {{ warning }}
+</div>
+{% endif %}
+
+<div class="row g-4">
+    <!-- Credentials & Placement Card -->
+    <div class="col-lg-7">
+        <div class="card bg-white p-4 h-100">
+            <div class="text-muted small mb-1">Generated Roll Number</div>
+            <div class="display-5 fw-bold text-dark mb-4">{{ roll_number }}</div>
+
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <div class="text-muted small">Login Username</div>
+                    <div class="fw-semibold">{{ student_user.username }}</div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-muted small">Temporary Password (shown once)</div>
+                    <div class="fw-bold text-danger">{{ temp_password }}</div>
+                    <small class="text-muted">Student must change this on first login.</small>
+                </div>
+                <div class="col-sm-4">
+                    <div class="text-muted small">Section</div>
+                    <div class="fw-semibold">{{ department.code }} - {{ section_name }}</div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="text-muted small">Mentor Group</div>
+                    <div class="fw-semibold">{{ mentor_group_name or "Not assigned yet" }}</div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="text-muted small">Mentor Name</div>
+                    <div class="fw-semibold">{{ mentor_name or "Not assigned yet" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Roll Number Breakdown Card -->
+    <div class="col-lg-5">
+        <div class="card bg-white p-4 h-100">
+            <h5 class="fw-bold mb-3">Roll Number Breakdown</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between px-0">
+                    <span>Admission Year</span>
+                    <strong>{{ yy }}</strong>
+                </li>
+                <li class="list-group-item d-flex justify-content-between px-0">
+                    <span>Branch Code</span>
+                    <strong>{{ branch_code }}</strong>
+                </li>
+                <li class="list-group-item d-flex justify-content-between px-0">
+                    <span>Serial Number</span>
+                    <strong>{{ serial_str }}</strong>
+                </li>
+            </ul>
+            <div class="mt-4">
+                <a href="/hod/registrations" class="btn btn-navy w-100">Back to Registrations</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

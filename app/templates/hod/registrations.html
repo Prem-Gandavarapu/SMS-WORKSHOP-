@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- 4 KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card p-3 bg-white">
+            <div class="text-muted small">Pending</div>
+            <div class="kpi-number">{{ counts.pending }}</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card p-3 bg-white">
+            <div class="text-muted small">Approved (Intake: {{ department.intake }})</div>
+            <div class="kpi-number">{{ counts.approved }} / {{ department.intake }}</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card p-3 bg-white">
+            <div class="text-muted small">Sent Back</div>
+            <div class="kpi-number">{{ counts.correction }}</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card p-3 bg-white">
+            <div class="text-muted small">Rejected</div>
+            <div class="kpi-number">{{ counts.rejected }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Tabs -->
+<div class="card bg-white p-3">
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <a class="nav-link {% if active_status == 'all' %}active{% endif %}" href="/hod/registrations?status=all">All</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if active_status == 'pending' %}active{% endif %}" href="/hod/registrations?status=pending">
+                Pending ({{ counts.pending }})
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if active_status == 'approved' %}active{% endif %}" href="/hod/registrations?status=approved">
+                Approved ({{ counts.approved }})
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if active_status == 'correction' %}active{% endif %}" href="/hod/registrations?status=correction">
+                Sent Back ({{ counts.correction }})
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if active_status == 'rejected' %}active{% endif %}" href="/hod/registrations?status=rejected">
+                Rejected ({{ counts.rejected }})
+            </a>
+        </li>
+    </ul>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Reference</th>
+                    <th>Name</th>
+                    <th>Quota</th>
+                    <th>Rank</th>
+                    <th>Inter %</th>
+                    <th>Docs</th>
+                    <th>Status</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in registrations %}
+                {% set doc_count = (1 if r.photo_path else 0) + (1 if r.marks_memo_path else 0) + (1 if r.id_proof_path else 0) %}
+                <tr>
+                    <td class="fw-semibold">{{ r.reference_no }}</td>
+                    <td>{{ r.full_name }}</td>
+                    <td class="text-capitalize">{{ r.quota }}</td>
+                    <td>{{ r.entrance_rank or "-" }}</td>
+                    <td>{{ "%.2f"|format(r.inter_percent) }}%</td>
+                    <td>{{ doc_count }}/3</td>
+                    <td>
+                        <span class="status-pill status-{{ r.status.value }}">
+                            {{ r.status.value|capitalize }}
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <a href="/hod/registrations/{{ r.id }}" class="btn btn-navy btn-sm">Review</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">
+                        No registrations found for this filter.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

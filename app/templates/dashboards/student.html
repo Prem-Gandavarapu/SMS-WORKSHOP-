@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- 4 KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card bg-white p-3 h-100">
+            <div class="text-muted small">Roll Number</div>
+            <div class="kpi-number">{{ student.roll_number }}</div>
+            <div class="small text-muted mt-1">
+                {{ student.department.code if student.department else "" }} &bull;
+                Sec {{ student.section.name if student.section else "" }}
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card bg-white p-3 h-100">
+            <div class="text-muted small">Year &amp; Semester</div>
+            <div class="kpi-number">
+                Y{{ student.section.current_year if student.section else "-" }} / S{{ student.section.current_semester if student.section else "-" }}
+            </div>
+            <div class="small text-muted mt-1">
+                {% if batch %}
+                    Batch {{ batch.start_year }}&ndash;{{ batch.end_year }}
+                {% else %}
+                    Batch not assigned
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card bg-white p-3 h-100">
+            <div class="text-muted small">Attendance</div>
+            <div class="kpi-number">&mdash;</div>
+            <div class="small text-muted mt-1">Starts on Day 2</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card bg-white p-3 h-100">
+            <div class="text-muted small">Status</div>
+            <div class="mt-2">
+                <span class="status-pill status-approved text-capitalize">{{ student.status }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- My Details Card -->
+    <div class="col-lg-6">
+        <div class="card bg-white p-4 h-100">
+            <h5 class="fw-bold mb-3">My Details</h5>
+            <div class="row g-2 small">
+                <div class="col-6"><strong>Full Name:</strong><br>{{ student.full_name }}</div>
+                <div class="col-6"><strong>Date of Birth:</strong><br>{{ student.dob }}</div>
+                <div class="col-6"><strong>Phone:</strong><br>{{ student.phone }}</div>
+                <div class="col-6"><strong>Email:</strong><br>{{ student.email }}</div>
+                <div class="col-6"><strong>Parent Name:</strong><br>{{ student.parent_name }}</div>
+                <div class="col-6"><strong>Quota:</strong><br><span class="text-capitalize">{{ student.quota }}</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Mentor & Latest Notice -->
+    <div class="col-lg-6 d-flex flex-column gap-4">
+        <div class="card bg-white p-4">
+            <h5 class="fw-bold mb-3">My Mentor</h5>
+            {% if mentor_user and student.mentor_group %}
+            <div class="small">
+                <div class="mb-1"><strong>Name:</strong> {{ mentor_user.full_name }}</div>
+                <div class="mb-1"><strong>Email:</strong> {{ mentor_user.email }}</div>
+                <div><strong>Group:</strong> {{ student.mentor_group.name }}</div>
+            </div>
+            {% else %}
+            <p class="text-muted small mb-0">No mentor assigned yet.</p>
+            {% endif %}
+        </div>
+
+        <div class="card bg-white p-4">
+            <h5 class="fw-bold mb-2">Latest Notice</h5>
+            {% if latest_notice %}
+            <div class="fw-semibold">{{ latest_notice.title }}</div>
+            <p class="text-muted small mb-0 mt-1">{{ latest_notice.body }}</p>
+            {% else %}
+            <p class="text-muted small mb-0">No notices posted yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

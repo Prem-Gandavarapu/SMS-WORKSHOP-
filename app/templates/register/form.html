@@ -1,0 +1,210 @@
+{% extends "base_public.html" %}
+
+{% block title %}First-Year Registration - Student Management System{% endblock %}
+{% block wrapper_class %}public-wrapper-wide{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm bg-white p-4 p-md-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">First-Year B.Tech Registration</h3>
+            <p class="text-muted small mb-0">Complete all 4 steps and submit your application for HOD review.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/register/status" class="btn btn-outline-secondary btn-sm">Track Status</a>
+            <a href="/login" class="btn btn-outline-secondary btn-sm">Back to Login</a>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- 4-Step Bootstrap Tabs -->
+    <ul class="nav nav-pills nav-fill mb-4" id="regTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-personal" data-bs-toggle="pill" data-bs-target="#step-personal" type="button" role="tab">
+                1. Personal Details
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-academic" data-bs-toggle="pill" data-bs-target="#step-academic" type="button" role="tab">
+                2. Academic Details
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-docs" data-bs-toggle="pill" data-bs-target="#step-docs" type="button" role="tab">
+                3. Documents
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-review" data-bs-toggle="pill" data-bs-target="#step-review" type="button" role="tab" onclick="fillReview()">
+                4. Review &amp; Submit
+            </button>
+        </li>
+    </ul>
+
+    <form method="post" action="/register" enctype="multipart/form-data" novalidate>
+        <div class="tab-content">
+            <!-- Step 1: Personal Details -->
+            <div class="tab-pane fade show active" id="step-personal" role="tabpanel">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-medium">Full Name *</label>
+                        <input type="text" class="form-control" name="full_name" id="f_full_name" value="{{ form.get('full_name', '') }}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-medium">Date of Birth *</label>
+                        <input type="date" class="form-control" name="dob" id="f_dob" value="{{ form.get('dob', '') }}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-medium">Gender *</label>
+                        <select class="form-select" name="gender" id="f_gender" required>
+                            <option value="">Select</option>
+                            <option value="Male" {% if form.get('gender') == 'Male' %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if form.get('gender') == 'Female' %}selected{% endif %}>Female</option>
+                            <option value="Other" {% if form.get('gender') == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-medium">Phone (10 digits) *</label>
+                        <input type="text" class="form-control" name="phone" id="f_phone" value="{{ form.get('phone', '') }}" placeholder="9876543210" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-medium">Email *</label>
+                        <input type="email" class="form-control" name="email" id="f_email" value="{{ form.get('email', '') }}" required>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label fw-medium">Parent / Guardian Name *</label>
+                        <input type="text" class="form-control" name="parent_name" id="f_parent_name" value="{{ form.get('parent_name', '') }}" required>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="button" class="btn btn-navy" onclick="goTab('tab-academic')">Next: Academic Details &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Academic Details -->
+            <div class="tab-pane fade" id="step-academic" role="tabpanel">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-medium">Branch *</label>
+                        <select class="form-select" name="department_id" id="f_department_id" required>
+                            <option value="">Select Branch</option>
+                            {% for dept in departments %}
+                            <option value="{{ dept.id }}" {% if form.get('department_id')|string == dept.id|string %}selected{% endif %}>
+                                {{ dept.code }} - {{ dept.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-medium">Admission Quota *</label>
+                        <select class="form-select" name="quota" id="f_quota" required>
+                            <option value="">Select Quota</option>
+                            <option value="convener" {% if form.get('quota') == 'convener' %}selected{% endif %}>Convener</option>
+                            <option value="management" {% if form.get('quota') == 'management' %}selected{% endif %}>Management</option>
+                            <option value="spot" {% if form.get('quota') == 'spot' %}selected{% endif %}>Spot</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-medium">Entrance Rank (Optional)</label>
+                        <input type="number" class="form-control" name="entrance_rank" id="f_entrance_rank" value="{{ form.get('entrance_rank', '') }}" min="1">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-medium">10th Percentage *</label>
+                        <input type="number" step="0.01" class="form-control" name="tenth_percent" id="f_tenth_percent" value="{{ form.get('tenth_percent', '') }}" min="0" max="100" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-medium">Inter / 12th Percentage *</label>
+                        <input type="number" step="0.01" class="form-control" name="inter_percent" id="f_inter_percent" value="{{ form.get('inter_percent', '') }}" min="0" max="100" required>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-secondary" onclick="goTab('tab-personal')">&larr; Back</button>
+                    <button type="button" class="btn btn-navy" onclick="goTab('tab-docs')">Next: Documents &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Documents -->
+            <div class="tab-pane fade" id="step-docs" role="tabpanel">
+                <p class="text-muted small mb-3">Allowed formats: <strong>.jpg, .jpeg, .png, .pdf</strong>. Maximum size: <strong>2 MB</strong> per file.</p>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label class="form-label fw-medium">Passport Photo *</label>
+                        <input type="file" class="form-control" name="photo" id="f_photo" accept=".jpg,.jpeg,.png,.pdf" required>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label fw-medium">12th / Inter Marks Memo *</label>
+                        <input type="file" class="form-control" name="marks_memo" id="f_marks_memo" accept=".jpg,.jpeg,.png,.pdf" required>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label fw-medium">Government ID Proof *</label>
+                        <input type="file" class="form-control" name="id_proof" id="f_id_proof" accept=".jpg,.jpeg,.png,.pdf" required>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-secondary" onclick="goTab('tab-academic')">&larr; Back</button>
+                    <button type="button" class="btn btn-navy" onclick="goTab('tab-review'); fillReview();">Next: Review &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Review and Submit -->
+            <div class="tab-pane fade" id="step-review" role="tabpanel">
+                <div class="border rounded p-3 bg-light mb-4">
+                    <h6 class="fw-bold mb-3">Application Summary</h6>
+                    <div class="row g-2 small">
+                        <div class="col-sm-6"><strong>Full Name:</strong> <span id="r_full_name">-</span></div>
+                        <div class="col-sm-6"><strong>DOB / Gender:</strong> <span id="r_dob_gender">-</span></div>
+                        <div class="col-sm-6"><strong>Phone:</strong> <span id="r_phone">-</span></div>
+                        <div class="col-sm-6"><strong>Email:</strong> <span id="r_email">-</span></div>
+                        <div class="col-sm-6"><strong>Parent Name:</strong> <span id="r_parent_name">-</span></div>
+                        <div class="col-sm-6"><strong>Branch / Quota:</strong> <span id="r_branch_quota">-</span></div>
+                        <div class="col-sm-6"><strong>10th / Inter %:</strong> <span id="r_marks">-</span></div>
+                        <div class="col-sm-6"><strong>Documents:</strong> <span id="r_docs">-</span></div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary" onclick="goTab('tab-docs')">&larr; Back</button>
+                    <button type="submit" class="btn btn-navy px-4 fw-semibold">Submit Registration</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+function goTab(tabId) {
+    const trigger = document.getElementById(tabId);
+    if (trigger) {
+        bootstrap.Tab.getOrCreateInstance(trigger).show();
+    }
+}
+
+function fillReview() {
+    document.getElementById("r_full_name").textContent = document.getElementById("f_full_name").value || "-";
+    const dob = document.getElementById("f_dob").value || "-";
+    const gender = document.getElementById("f_gender").value || "-";
+    document.getElementById("r_dob_gender").textContent = `${dob} / ${gender}`;
+    document.getElementById("r_phone").textContent = document.getElementById("f_phone").value || "-";
+    document.getElementById("r_email").textContent = document.getElementById("f_email").value || "-";
+    document.getElementById("r_parent_name").textContent = document.getElementById("f_parent_name").value || "-";
+
+    const deptSel = document.getElementById("f_department_id");
+    const deptText = deptSel.selectedIndex > 0 ? deptSel.options[deptSel.selectedIndex].text : "-";
+    const quota = document.getElementById("f_quota").value || "-";
+    document.getElementById("r_branch_quota").textContent = `${deptText} (${quota})`;
+
+    const tenth = document.getElementById("f_tenth_percent").value || "-";
+    const inter = document.getElementById("f_inter_percent").value || "-";
+    document.getElementById("r_marks").textContent = `${tenth}% / ${inter}%`;
+
+    const p = document.getElementById("f_photo").files[0]?.name || "Missing";
+    const m = document.getElementById("f_marks_memo").files[0]?.name || "Missing";
+    const i = document.getElementById("f_id_proof").files[0]?.name || "Missing";
+    document.getElementById("r_docs").textContent = `${p}, ${m}, ${i}`;
+}
+</script>
+{% endblock %}

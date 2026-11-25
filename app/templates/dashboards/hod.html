@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if sections_missing_group %}
+<div class="alert alert-warning mb-4">
+    <strong>Attention:</strong> Some sections have students without a mentor group:
+    {{ sections_missing_group | join(", ") }}
+</div>
+{% endif %}
+
+<!-- 4 KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card bg-white p-3 h-100">
+            <div class="text-muted small">Department Students</div>
+            <div class="kpi-number">{{ total_students }}</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card bg-white p-3 h-100">
+            <div class="text-muted small">Sections</div>
+            <div class="kpi-number">{{ section_count }}</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card bg-white p-3 h-100">
+            <div class="text-muted small">Mentor Groups</div>
+            <div class="kpi-number">{{ group_count }}</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card bg-white p-3 h-100">
+            <div class="text-muted small">Pending Registrations</div>
+            <div class="kpi-number">{{ pending_count }}</div>
+            <a href="/hod/registrations" class="small mt-1">Review queue &rarr;</a>
+        </div>
+    </div>
+</div>
+
+<!-- Sections Table -->
+<div class="card bg-white p-4">
+    <h5 class="fw-bold mb-3">{{ department.code }} Sections &amp; Mentors</h5>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Section</th>
+                    <th>Year / Sem</th>
+                    <th>Students</th>
+                    <th>Mentor(s)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in section_rows %}
+                <tr>
+                    <td class="fw-semibold">{{ s.label }}</td>
+                    <td>Year {{ s.year }} &bull; Sem {{ s.semester }}</td>
+                    <td>{{ s.students }}</td>
+                    <td>{{ s.mentors }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted py-4">No sections found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

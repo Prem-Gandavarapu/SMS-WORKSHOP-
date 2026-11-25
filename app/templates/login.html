@@ -1,0 +1,74 @@
+{% extends "base_public.html" %}
+
+{% block title %}Login - Student Management System{% endblock %}
+{% block wrapper_class %}public-wrapper-wide{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm overflow-hidden">
+    <div class="row g-0">
+        <!-- Left Navy Info Panel -->
+        <div class="col-md-5 bg-navy text-white p-4 p-md-5 d-flex flex-column justify-content-between">
+            <div>
+                <span class="badge role-badge mb-3">B.Tech Portal</span>
+                <h2 class="fw-bold mb-3">One login. Your own dashboard.</h2>
+                <p class="text-white-50 mb-0">
+                    Sign in with your college email or student roll number to access your portal.
+                </p>
+            </div>
+
+            <div class="pt-4 mt-4 border-top border-secondary">
+                <p class="small mb-1 text-white-50">New first-year student?</p>
+                <a href="/register" class="link-warning fw-semibold text-decoration-none">
+                    New first-year student? Register here &rarr;
+                </a>
+            </div>
+        </div>
+
+        <!-- Right Login Form Panel -->
+        <div class="col-md-7 bg-white p-4 p-md-5">
+            <h4 class="fw-bold mb-1">Sign In</h4>
+            <p class="text-muted small mb-4">Enter your credentials to continue.</p>
+
+            {% if error %}
+            <div class="alert alert-danger py-2" role="alert">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="post" action="/login">
+                <div class="mb-3">
+                    <label for="username" class="form-label fw-medium">
+                        Username (Email or Roll Number)
+                    </label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="username"
+                        name="username"
+                        value="{{ username or '' }}"
+                        placeholder="e.g. management@college.edu or 26CSE001"
+                        required
+                        autofocus
+                    >
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label fw-medium">Password</label>
+                    <input
+                        type="password"
+                        class="form-control"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                    Login
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

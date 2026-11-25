@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="/hod/registrations" class="btn btn-outline-secondary btn-sm">&larr; Back to Registrations</a>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<div class="row g-4">
+    <!-- Left Column: Applicant Details & Documents -->
+    <div class="col-lg-8">
+        <div class="card bg-white p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h4 class="fw-bold mb-1">{{ reg.full_name }}</h4>
+                    <div class="text-muted small">{{ reg.reference_no }} &bull; {{ department.code }} ({{ department.name }})</div>
+                </div>
+                <span class="status-pill status-{{ reg.status.value }}">
+                    {{ reg.status.value|capitalize }}
+                </span>
+            </div>
+
+            <div class="row g-3 small">
+                <div class="col-md-4"><strong>Date of Birth:</strong><br>{{ reg.dob }}</div>
+                <div class="col-md-4"><strong>Gender:</strong><br>{{ reg.gender }}</div>
+                <div class="col-md-4"><strong>Phone:</strong><br>{{ reg.phone }}</div>
+                <div class="col-md-6"><strong>Email:</strong><br>{{ reg.email }}</div>
+                <div class="col-md-6"><strong>Parent / Guardian:</strong><br>{{ reg.parent_name }}</div>
+                <div class="col-md-3"><strong>Quota:</strong><br><span class="text-capitalize">{{ reg.quota }}</span></div>
+                <div class="col-md-3"><strong>Entrance Rank:</strong><br>{{ reg.entrance_rank or "-" }}</div>
+                <div class="col-md-3"><strong>10th %:</strong><br>{{ reg.tenth_percent }}%</div>
+                <div class="col-md-3"><strong>Inter %:</strong><br>{{ reg.inter_percent }}%</div>
+            </div>
+        </div>
+
+        <div class="card bg-white p-4">
+            <h5 class="fw-bold mb-3">Uploaded Documents</h5>
+            <div class="row g-3 align-items-center">
+                <div class="col-md-4 text-center">
+                    <img src="{{ reg.photo_path }}" alt="Applicant Photo" class="img-thumbnail mb-2" style="max-height: 160px;">
+                    <div><a href="{{ reg.photo_path }}" target="_blank" class="btn btn-outline-secondary btn-sm">Open Photo</a></div>
+                </div>
+                <div class="col-md-8 d-flex flex-column gap-2">
+                    <a href="{{ reg.marks_memo_path }}" target="_blank" class="btn btn-outline-primary text-start">
+                        Open 12th / Inter Marks Memo &rarr;
+                    </a>
+                    <a href="{{ reg.id_proof_path }}" target="_blank" class="btn btn-outline-primary text-start">
+                        Open Government ID Proof &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: HOD Decision -->
+    <div class="col-lg-4">
+        <div class="card bg-white p-4">
+            <h5 class="fw-bold mb-3">HOD Decision</h5>
+
+            {% if reg.status.value == "pending" %}
+            <form method="post" action="/hod/registrations/{{ reg.id }}/approve" class="mb-3">
+                <button type="submit" class="btn btn-success w-100 fw-semibold">
+                    Approve &amp; Generate Roll Number
+                </button>
+            </form>
+
+            <hr>
+
+            <form method="post" action="/hod/registrations/{{ reg.id }}/correction" class="mb-3">
+                <label class="form-label small fw-medium">Send Back for Correction (Remarks required)</label>
+                <textarea name="remarks" class="form-control form-control-sm mb-2" rows="2" placeholder="e.g. Please upload a clearer marks memo" required></textarea>
+                <button type="submit" class="btn btn-outline-primary w-100 btn-sm">Send Back for Correction</button>
+            </form>
+
+            <form method="post" action="/hod/registrations/{{ reg.id }}/reject">
+                <label class="form-label small fw-medium">Reject Application (Remarks required)</label>
+                <textarea name="remarks" class="form-control form-control-sm mb-2" rows="2" placeholder="Reason for rejection" required></textarea>
+                <button type="submit" class="btn btn-outline-danger w-100 btn-sm">Reject Application</button>
+            </form>
+            {% else %}
+            <div class="alert alert-secondary mb-0">
+                This application has already been <strong>{{ reg.status.value }}</strong> and cannot be approved again.
+                {% if reg.hod_remarks %}
+                <hr class="my-2">
+                <div class="small"><strong>Remarks:</strong> {{ reg.hod_remarks }}</div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

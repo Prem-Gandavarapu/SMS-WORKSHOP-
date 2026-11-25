@@ -1,0 +1,100 @@
+/* Left sidebar in college navy */
+.sidebar {
+    width: 100%;
+    background-color: #0B2150;
+}
+
+@media (min-width: 768px) {
+    .sidebar {
+        width: 240px;
+        min-width: 240px;
+    }
+}
+
+.bg-navy {
+    background-color: #0B2150;
+}
+
+.btn-navy {
+    background-color: #0B2150;
+    border-color: #0B2150;
+    color: #ffffff;
+}
+
+.btn-navy:hover,
+.btn-navy:focus {
+    background-color: #08193d;
+    border-color: #08193d;
+    color: #ffffff;
+}
+
+.sidebar-link {
+    color: rgba(255, 255, 255, 0.85);
+    border-radius: 0.5rem;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Gold role badge in the top bar */
+.role-badge {
+    background-color: #C9A227;
+    color: #0B2150;
+    font-weight: 600;
+    padding: 0.4em 0.65em;
+}
+
+/* Centered max-width for public forms */
+.public-wrapper {
+    max-width: 480px;
+}
+
+.public-wrapper-wide {
+    max-width: 860px;
+}
+
+/* Cards with rounded corners */
+.card {
+    border-radius: 0.75rem;
+    border: 1px solid #e5e7eb;
+}
+
+/* Large KPI number style for dashboards */
+.kpi-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0B2150;
+    line-height: 1.1;
+}
+
+/* Status pills */
+.status-pill {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-pending {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.status-approved {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-rejected {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.status-correction {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
