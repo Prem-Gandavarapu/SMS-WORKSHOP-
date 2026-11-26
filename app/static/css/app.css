@@ -87,6 +87,27 @@ a:not(.btn):hover {
     border-radius: 0.5rem;
 }
 
+.sidebar .nav-pills .nav-link {
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 0.5rem;
+}
+
+.sidebar .nav-pills .nav-link:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.18);
+}
+
+.sidebar .nav-pills .nav-link.active {
+    color: #c84e03;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(124, 47, 0, 0.18);
+}
+
+.sidebar .badge {
+    background-color: #fff4e8 !important;
+    color: #c84e03 !important;
+}
+
 .sidebar-link:hover,
 .sidebar-link.active {
     color: #ffffff;
