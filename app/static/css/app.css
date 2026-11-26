@@ -7,10 +7,10 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Official GIST navy */
+/* Orange and white GIST theme */
 .sidebar {
     width: 100%;
-    background-color: #142D4E;
+    background: linear-gradient(180deg, #e45c04 0%, #c84e03 100%);
 }
 
 @media (min-width: 768px) {
@@ -21,19 +21,19 @@ body {
 }
 
 .bg-navy {
-    background-color: #142D4E;
+    background-color: #e45c04;
 }
 
 .btn-navy {
-    background-color: #142D4E;
-    border-color: #142D4E;
+    background-color: #e45c04;
+    border-color: #e45c04;
     color: #ffffff;
 }
 
 .btn-navy:hover,
 .btn-navy:focus {
-    background-color: #0d2038;
-    border-color: #0d2038;
+    background-color: #c84e03;
+    border-color: #c84e03;
     color: #ffffff;
 }
 
@@ -45,7 +45,7 @@ body {
 .sidebar-link:hover,
 .sidebar-link.active {
     color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.14);
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* GIST branding */
@@ -74,8 +74,8 @@ body {
 
 /* Gold role badge in the top bar */
 .role-badge {
-    background-color: #D9A52E;
-    color: #142D4E;
+    background-color: #fff4e8;
+    color: #c84e03;
     font-weight: 600;
     padding: 0.4em 0.65em;
 }
@@ -99,7 +99,7 @@ body {
 .kpi-number {
     font-size: 2rem;
     font-weight: 700;
-    color: #0B2150;
+    color: #e45c04;
     line-height: 1.1;
 }
 
@@ -128,8 +128,8 @@ body {
 }
 
 .status-correction {
-    background-color: #dbeafe;
-    color: #1e40af;
+    background-color: #fff1e6;
+    color: #c84e03;
 }
 
 
@@ -139,7 +139,7 @@ body {
 
 /* Subtle gradient background for public pages */
 .public-body {
-    background: linear-gradient(135deg, #f2f6ff 0%, #eef3fa 55%, #f7f5e7 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #fff8f1 58%, #fff1e6 100%);
     min-height: 100vh;
 }
 
@@ -155,9 +155,9 @@ body {
     border: 1px solid rgba(11, 33, 80, 0.06);
 }
 
-/* Left navy panel */
+/* Orange branding panel */
 .login-left {
-    background: linear-gradient(160deg, #142D4E 0%, #0750a5 100%);
+    background: linear-gradient(160deg, #e45c04 0%, #f07b22 100%);
     color: #ffffff;
     padding: 2.5rem;
     position: relative;
@@ -174,7 +174,7 @@ body {
     width: 200px;
     height: 200px;
     border-radius: 50%;
-    background: rgba(228, 92, 4, 0.18);
+    background: rgba(255, 255, 255, 0.15);
     pointer-events: none;
 }
 
@@ -217,7 +217,7 @@ body {
 }
 
 .login-heading-gold {
-    color: #D9A52E;
+    color: #ffffff;
 }
 
 /* Description paragraph */
@@ -259,7 +259,7 @@ body {
 }
 
 .login-register-anchor {
-    color: #D9A52E;
+    color: #ffffff;
     font-weight: 600;
     font-size: 0.9rem;
     text-decoration: none;
@@ -267,7 +267,7 @@ body {
 }
 
 .login-register-anchor:hover {
-    color: #f0c95c;
+    color: #fff1e6;
     text-decoration: underline;
 }
 
@@ -280,7 +280,7 @@ body {
 .login-form-title {
     font-size: 1.65rem;
     font-weight: 700;
-    color: #142D4E;
+    color: #e45c04;
     letter-spacing: -0.01em;
     margin-bottom: 0.25rem;
 }
@@ -332,8 +332,8 @@ body {
 }
 
 .login-input:focus {
-    border-color: #0750a5;
-    box-shadow: 0 0 0 3px rgba(7, 80, 165, 0.12);
+    border-color: #e45c04;
+    box-shadow: 0 0 0 3px rgba(228, 92, 4, 0.12);
     background-color: #ffffff;
     outline: none;
 }
