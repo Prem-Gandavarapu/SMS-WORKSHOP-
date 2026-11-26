@@ -37,6 +37,51 @@ body {
     color: #ffffff;
 }
 
+/* Keep Bootstrap actions and links in the shared orange theme. */
+.btn-primary,
+.btn-info,
+.btn-success,
+.btn-warning,
+.btn-danger {
+    background-color: #e45c04;
+    border-color: #e45c04;
+    color: #ffffff;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-info:hover,
+.btn-info:focus,
+.btn-success:hover,
+.btn-success:focus,
+.btn-warning:hover,
+.btn-warning:focus,
+.btn-danger:hover,
+.btn-danger:focus {
+    background-color: #c84e03;
+    border-color: #c84e03;
+    color: #ffffff;
+}
+
+.bg-info,
+.bg-primary {
+    background-color: #e45c04 !important;
+}
+
+.alert-info {
+    background-color: #fff1e6;
+    border-color: #f6c29d;
+    color: #9a3d00;
+}
+
+a:not(.btn) {
+    color: #c84e03;
+}
+
+a:not(.btn):hover {
+    color: #e45c04;
+}
+
 .sidebar-link {
     color: rgba(255, 255, 255, 0.85);
     border-radius: 0.5rem;
