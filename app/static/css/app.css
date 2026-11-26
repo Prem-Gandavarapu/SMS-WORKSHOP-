@@ -48,6 +48,23 @@ body {
     background-color: rgba(255, 255, 255, 0.14);
 }
 
+/* GIST branding */
+.brand-logo {
+    object-fit: contain;
+    background: #ffffff;
+    border-radius: 0.35rem;
+}
+
+.brand-logo-sidebar {
+    width: 34px;
+    height: 34px;
+}
+
+.brand-logo-login {
+    width: 28px;
+    height: 28px;
+}
+
 /* Gold role badge in the top bar */
 .role-badge {
     background-color: #C9A227;
