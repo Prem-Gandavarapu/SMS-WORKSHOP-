@@ -7,10 +7,10 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Left sidebar in college navy */
+/* Official GIST navy */
 .sidebar {
     width: 100%;
-    background-color: #0B2150;
+    background-color: #142D4E;
 }
 
 @media (min-width: 768px) {
@@ -21,19 +21,19 @@ body {
 }
 
 .bg-navy {
-    background-color: #0B2150;
+    background-color: #142D4E;
 }
 
 .btn-navy {
-    background-color: #0B2150;
-    border-color: #0B2150;
+    background-color: #142D4E;
+    border-color: #142D4E;
     color: #ffffff;
 }
 
 .btn-navy:hover,
 .btn-navy:focus {
-    background-color: #08193d;
-    border-color: #08193d;
+    background-color: #0d2038;
+    border-color: #0d2038;
     color: #ffffff;
 }
 
@@ -61,14 +61,21 @@ body {
 }
 
 .brand-logo-login {
-    width: 28px;
-    height: 28px;
+    width: 92px;
+    height: 82px;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+}
+
+.login-branding {
+    position: relative;
+    z-index: 1;
 }
 
 /* Gold role badge in the top bar */
 .role-badge {
-    background-color: #C9A227;
-    color: #0B2150;
+    background-color: #D9A52E;
+    color: #142D4E;
     font-weight: 600;
     padding: 0.4em 0.65em;
 }
@@ -132,7 +139,7 @@ body {
 
 /* Subtle gradient background for public pages */
 .public-body {
-    background: linear-gradient(135deg, #f0f4f8 0%, #e8ecf1 50%, #f5f3ef 100%);
+    background: linear-gradient(135deg, #f2f6ff 0%, #eef3fa 55%, #f7f5e7 100%);
     min-height: 100vh;
 }
 
@@ -150,11 +157,12 @@ body {
 
 /* Left navy panel */
 .login-left {
-    background: linear-gradient(160deg, #0B2150 0%, #122d5e 60%, #0d2a5a 100%);
+    background: linear-gradient(160deg, #142D4E 0%, #0750a5 100%);
     color: #ffffff;
     padding: 2.5rem;
     position: relative;
     overflow: hidden;
+    border-top: 6px solid #e45c04;
 }
 
 /* Subtle decorative circles on the left panel */
@@ -166,7 +174,7 @@ body {
     width: 200px;
     height: 200px;
     border-radius: 50%;
-    background: rgba(201, 162, 39, 0.08);
+    background: rgba(228, 92, 4, 0.18);
     pointer-events: none;
 }
 
@@ -182,42 +190,42 @@ body {
     pointer-events: none;
 }
 
-/* College badge on left panel */
+/* GIST logo and name */
 .login-badge {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(201, 162, 39, 0.15);
-    color: #C9A227;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
     font-size: 0.8rem;
     font-weight: 600;
     padding: 0.45rem 0.9rem;
     border-radius: 999px;
-    border: 1px solid rgba(201, 162, 39, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     margin-bottom: 1.75rem;
     letter-spacing: 0.03em;
     text-transform: uppercase;
 }
 
-/* Main heading */
+/* Clean login branding */
 .login-heading {
-    font-size: 2rem;
+    font-size: 2.4rem;
     font-weight: 800;
     line-height: 1.2;
-    margin-bottom: 1rem;
+    margin: 1.25rem 0 0.35rem;
     letter-spacing: -0.02em;
 }
 
 .login-heading-gold {
-    color: #C9A227;
+    color: #D9A52E;
 }
 
 /* Description paragraph */
 .login-description {
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 0.925rem;
-    line-height: 1.65;
-    margin-bottom: 1.5rem;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 0;
 }
 
 /* Feature pills row */
@@ -251,7 +259,7 @@ body {
 }
 
 .login-register-anchor {
-    color: #C9A227;
+    color: #D9A52E;
     font-weight: 600;
     font-size: 0.9rem;
     text-decoration: none;
@@ -259,7 +267,7 @@ body {
 }
 
 .login-register-anchor:hover {
-    color: #dbb632;
+    color: #f0c95c;
     text-decoration: underline;
 }
 
@@ -272,7 +280,7 @@ body {
 .login-form-title {
     font-size: 1.65rem;
     font-weight: 700;
-    color: #0B2150;
+    color: #142D4E;
     letter-spacing: -0.01em;
     margin-bottom: 0.25rem;
 }
@@ -324,15 +332,15 @@ body {
 }
 
 .login-input:focus {
-    border-color: #0B2150;
-    box-shadow: 0 0 0 3px rgba(11, 33, 80, 0.1);
+    border-color: #0750a5;
+    box-shadow: 0 0 0 3px rgba(7, 80, 165, 0.12);
     background-color: #ffffff;
     outline: none;
 }
 
 /* Login button */
 .login-btn {
-    background: linear-gradient(135deg, #0B2150 0%, #142e5c 100%);
+    background: linear-gradient(135deg, #e45c04 0%, #f07b22 100%);
     color: #ffffff;
     font-weight: 600;
     font-size: 1rem;
@@ -341,19 +349,19 @@ body {
     border-radius: 0.6rem;
     letter-spacing: 0.02em;
     transition: all 0.25s ease;
-    box-shadow: 0 2px 8px rgba(11, 33, 80, 0.25);
+    box-shadow: 0 2px 8px rgba(228, 92, 4, 0.28);
 }
 
 .login-btn:hover {
-    background: linear-gradient(135deg, #08193d 0%, #0d2347 100%);
+    background: linear-gradient(135deg, #c84e03 0%, #e45c04 100%);
     color: #ffffff;
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(11, 33, 80, 0.35);
+    box-shadow: 0 4px 16px rgba(228, 92, 4, 0.35);
 }
 
 .login-btn:active {
     transform: translateY(0);
-    box-shadow: 0 1px 4px rgba(11, 33, 80, 0.2);
+    box-shadow: 0 1px 4px rgba(228, 92, 4, 0.2);
 }
 
 /* Footer text */
