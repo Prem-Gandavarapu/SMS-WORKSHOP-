@@ -6,7 +6,7 @@ from sqlmodel import Field, SQLModel
 
 
 class Role(str, Enum):
-    """User roles in the Student Management System."""
+    """User roles in GIST SMS."""
 
     MANAGEMENT = "management"
     HOD = "hod"

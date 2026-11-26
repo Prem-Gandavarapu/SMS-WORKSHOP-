@@ -272,7 +272,7 @@ def setup_admin(app: FastAPI) -> Admin:
         app=app,
         engine=engine,
         base_url="/admin",
-        title="SMS Admin",
+        title="GIST SMS Admin",
         authentication_backend=auth_backend,
     )
 

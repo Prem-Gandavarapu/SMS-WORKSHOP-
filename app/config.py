@@ -9,7 +9,7 @@ class Settings:
     """Application settings loaded from environment variables."""
 
     def __init__(self) -> None:
-        self.APP_NAME: str = os.getenv("APP_NAME", "Student Management System")
+        self.APP_NAME: str = os.getenv("APP_NAME", "GIST SMS")
         self.DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./sms.db")
         self.SECRET_KEY: str = os.getenv("SECRET_KEY", "")
         self.ACCESS_TOKEN_MINUTES: int = int(os.getenv("ACCESS_TOKEN_MINUTES", "480"))
