@@ -17,7 +17,9 @@ router = APIRouter()
 
 APP_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = APP_DIR / "templates"
-UPLOAD_BASE = APP_DIR / "static" / "uploads" / "registrations"
+UPLOAD_BASE = (
+    Path(settings.UPLOAD_DIR) if settings.UPLOAD_DIR else APP_DIR / "static" / "uploads"
+) / "registrations"
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".pdf"}

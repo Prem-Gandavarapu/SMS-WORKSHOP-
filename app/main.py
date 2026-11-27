@@ -35,17 +35,36 @@ def ensure_default_departments() -> None:
             session.commit()
 
 
+def init_app_data() -> None:
+    """Create tables and default data; seed demo data on an empty database if enabled."""
+    create_db_and_tables()
+    if settings.SEED_DEMO_DATA:
+        from app.models.users import User
+
+        with Session(engine) as session:
+            has_users = session.exec(select(User)).first() is not None
+        if not has_users:
+            from scripts.seed import seed
+
+            seed()
+    ensure_default_departments()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Run startup and shutdown tasks for the application."""
-    # Create database tables when the server starts
-    create_db_and_tables()
-    ensure_default_departments()
+    init_app_data()
     yield
 
 
 # Initialize the FastAPI application
 app = FastAPI(title=settings.APP_NAME, lifespan=lifespan)
+
+# Serve uploads from a writable directory when configured (e.g. /tmp on Vercel).
+# Mounted before /static so it takes precedence for /static/uploads paths.
+if settings.UPLOAD_DIR:
+    Path(settings.UPLOAD_DIR).mkdir(parents=True, exist_ok=True)
+    app.mount("/static/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
 
 # Serve CSS, JS, and images from /static
 app.mount("/static", StaticFiles(directory=APP_DIR / "static"), name="static")

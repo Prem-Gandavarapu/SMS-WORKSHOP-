@@ -10,7 +10,18 @@ class Settings:
 
     def __init__(self) -> None:
         self.APP_NAME: str = os.getenv("APP_NAME", "GIST SMS")
-        self.DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./sms.db")
+        # Vercel's filesystem is read-only except /tmp, so default there when deployed
+        self.IS_VERCEL: bool = bool(os.getenv("VERCEL"))
+        default_db = "sqlite:////tmp/sms.db" if self.IS_VERCEL else "sqlite:///./sms.db"
+        self.DATABASE_URL: str = os.getenv("DATABASE_URL", default_db)
+        # Where uploaded registration documents are written (served at /static/uploads)
+        self.UPLOAD_DIR: str = os.getenv(
+            "UPLOAD_DIR", "/tmp/uploads" if self.IS_VERCEL else ""
+        )
+        # Populate demo data on startup when the database has no users
+        self.SEED_DEMO_DATA: bool = os.getenv(
+            "SEED_DEMO_DATA", "1" if self.IS_VERCEL else "0"
+        ) == "1"
         self.SECRET_KEY: str = os.getenv("SECRET_KEY", "")
         self.ACCESS_TOKEN_MINUTES: int = int(os.getenv("ACCESS_TOKEN_MINUTES", "480"))
         self.ADMISSION_YEAR: int = int(os.getenv("ADMISSION_YEAR", "2026"))
