@@ -1,3 +1,4 @@
+from datetime import date
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -16,14 +17,57 @@ from app.models.academics import (
     Subject,
     TeachingAssignment,
 )
-from app.models.later import Notice
+from app.models.later import Attendance, LeaveRequest, Notice
 from app.models.registration import Registration, RegistrationStatus
 from app.models.users import Role, User
+from app.services.attendance import (
+    approved_leave_dates,
+    calculate_attendance_summary,
+    calendar_days,
+    period_details,
+    subject_attendance,
+)
 
 router = APIRouter(tags=["dashboards"])
 
 TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
+
+
+def _student_attendance_data(session: Session, student: Student) -> dict:
+    """Load all attendance inputs for one authenticated student."""
+    section = session.get(Section, student.section_id)
+    current_year = section.current_year if section else 1
+    current_semester = section.current_semester if section else 1
+    subjects = session.exec(
+        select(Subject)
+        .where(
+            Subject.department_id == student.department_id,
+            Subject.year == current_year,
+            Subject.semester == current_semester,
+        )
+        .order_by(Subject.code)
+    ).all()
+    records = session.exec(
+        select(Attendance)
+        .where(Attendance.student_id == student.id)
+        .order_by(Attendance.date, Attendance.period)
+    ).all()
+    leaves = session.exec(
+        select(LeaveRequest).where(
+            LeaveRequest.student_id == student.id,
+            LeaveRequest.status == "approved",
+        )
+    ).all()
+    leave_dates = approved_leave_dates(leaves)
+    return {
+        "section": section,
+        "subjects": subjects,
+        "records": records,
+        "leaves": leaves,
+        "leave_dates": leave_dates,
+        "summary": calculate_attendance_summary(records, leave_dates),
+    }
 
 
 @router.get("/management")
@@ -341,11 +385,12 @@ def student_dashboard(
     ).first()
 
     first_name = student.full_name.split()[0] if student.full_name else "Student"
+    attendance_data = _student_attendance_data(session, student)
 
     nav_links = [
         {"label": "Dashboard", "url": "/student", "active": True},
         {"label": "Change password", "url": "/change-password", "active": False},
-        {"label": "Attendance", "url": "#", "disabled": True, "tag": "Day 2"},
+        {"label": "Attendance", "url": "/student/attendance", "active": False},
         {"label": "Marks", "url": "#", "disabled": True, "tag": "Day 3"},
         {"label": "Hall ticket", "url": "#", "disabled": True, "tag": "Day 3"},
     ]
@@ -361,5 +406,75 @@ def student_dashboard(
             "batch": batch,
             "mentor_user": mentor_user,
             "latest_notice": latest_notice,
+            "attendance_summary": attendance_data["summary"],
+        },
+    )
+
+
+@router.get("/student/attendance")
+def student_attendance(
+    request: Request,
+    selected_date: str | None = None,
+    current_user: User = Depends(require_role(Role.STUDENT)),
+    session: Session = Depends(get_session),
+):
+    """Show the authenticated student's overall, subject, and daily attendance."""
+    student = session.exec(
+        select(Student).where(Student.user_id == current_user.id)
+    ).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student profile not found.")
+
+    attendance_data = _student_attendance_data(session, student)
+    today = date.today()
+    parsed_date = None
+    if selected_date:
+        try:
+            parsed_date = date.fromisoformat(selected_date)
+        except ValueError:
+            parsed_date = None
+    if not parsed_date or (parsed_date.year, parsed_date.month) != (today.year, today.month):
+        month_dates = [
+            record.date
+            for record in attendance_data["records"]
+            if (record.date.year, record.date.month) == (today.year, today.month)
+        ]
+        parsed_date = max(month_dates) if month_dates else today
+
+    nav_links = [
+        {"label": "Dashboard", "url": "/student", "active": False},
+        {"label": "Change password", "url": "/change-password", "active": False},
+        {"label": "Attendance", "url": "/student/attendance", "active": True},
+        {"label": "Marks", "url": "#", "disabled": True, "tag": "Day 3"},
+        {"label": "Hall ticket", "url": "#", "disabled": True, "tag": "Day 3"},
+    ]
+    return templates.TemplateResponse(
+        request,
+        "dashboards/student_attendance.html",
+        {
+            "current_user": current_user,
+            "page_title": "My Attendance",
+            "nav_links": nav_links,
+            "student": student,
+            "attendance_summary": attendance_data["summary"],
+            "subject_rows": subject_attendance(
+                attendance_data["records"],
+                attendance_data["subjects"],
+                attendance_data["leave_dates"],
+            ),
+            "calendar_days": calendar_days(
+                today.year,
+                today.month,
+                attendance_data["records"],
+                attendance_data["leave_dates"],
+            ),
+            "selected_date": parsed_date,
+            "selected_periods": period_details(
+                parsed_date,
+                attendance_data["records"],
+                attendance_data["subjects"],
+                attendance_data["leave_dates"],
+            ),
+            "month_label": today.strftime("%B %Y"),
         },
     )

@@ -198,6 +198,134 @@ a:not(.btn):hover {
     color: #c84e03;
 }
 
+/* Student attendance */
+.attendance-good {
+    color: #198754 !important;
+}
+
+.attendance-low {
+    color: #dc3545 !important;
+}
+
+.attendance-status-pill,
+.attendance-period-status {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.35rem 0.7rem;
+}
+
+.attendance-status-good,
+.attendance-period-present,
+.attendance-period-late {
+    background: #e8f6ef;
+    color: #157347;
+}
+
+.attendance-status-low,
+.attendance-period-absent {
+    background: #fdebec;
+    color: #b02a37;
+}
+
+.attendance-period-no-record {
+    background: #f1f3f5;
+    color: #6c757d;
+}
+
+.attendance-warning {
+    background: #fff1e6;
+    border: 1px solid #f6c29d;
+    color: #9a3d00;
+}
+
+.attendance-guidance {
+    background: #e8f6ef;
+    border: 1px solid #b7e1c8;
+    color: #146c43;
+}
+
+.attendance-row-low {
+    background: #fff7f7;
+}
+
+.attendance-chart-wrap {
+    height: 280px;
+    position: relative;
+}
+
+.attendance-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.attendance-dot {
+    display: inline-block;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    margin-right: 0.25rem;
+}
+
+.attendance-dot-green { background: #198754; }
+.attendance-dot-amber { background: #f0ad4e; }
+.attendance-dot-red { background: #dc3545; }
+.attendance-dot-grey { background: #adb5bd; }
+
+.attendance-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.35rem;
+}
+
+.attendance-calendar-heading {
+    color: #6c757d;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem;
+    text-align: center;
+}
+
+.attendance-day {
+    align-items: center;
+    aspect-ratio: 1 / 0.85;
+    border: 1px solid transparent;
+    border-radius: 0.45rem;
+    color: #212529;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    padding: 0.25rem;
+    text-decoration: none;
+}
+
+.attendance-day:hover,
+.attendance-day-selected {
+    border-color: #e45c04;
+    box-shadow: 0 0 0 2px rgba(228, 92, 4, 0.12);
+}
+
+.attendance-day small {
+    font-size: 0.6rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-top: 0.15rem;
+}
+
+.attendance-day-green { background: #e8f6ef; }
+.attendance-day-amber { background: #fff4df; }
+.attendance-day-red { background: #fdebec; }
+.attendance-day-grey { background: #f1f3f5; color: #6c757d; }
+.attendance-day-muted { opacity: 0.55; }
+
+.attendance-kpi-card {
+    border-top: 3px solid #e45c04;
+}
+
 
 /* ===================================
    PUBLIC PAGE (Login / Register) STYLES

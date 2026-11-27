@@ -31,8 +31,13 @@
     <div class="col-sm-6 col-xl-3">
         <div class="card bg-white p-3 h-100">
             <div class="text-muted small">Attendance</div>
-            <div class="kpi-number">&mdash;</div>
-            <div class="small text-muted mt-1">Starts on Day 2</div>
+            <div class="kpi-number {% if attendance_summary.is_low %}attendance-low{% else %}attendance-good{% endif %}">
+                {{ "%.1f"|format(attendance_summary.percentage) }}%
+            </div>
+            <div class="small text-muted mt-1">
+                {{ attendance_summary.attended }} / {{ attendance_summary.total }} attended
+            </div>
+            <a href="/student/attendance" class="small mt-1">View attendance &rarr;</a>
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
