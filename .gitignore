@@ -5,3 +5,5 @@ __pycache__/
 app/static/uploads/
 .DS_Store
 .vscode/
+.vercel
+.env*
