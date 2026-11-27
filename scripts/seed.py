@@ -1,5 +1,6 @@
 import random
-from datetime import date, datetime, timezone
+from collections import Counter
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from faker import Faker
@@ -17,7 +18,7 @@ from app.models.academics import (
     Subject,
     TeachingAssignment,
 )
-from app.models.later import Notice
+from app.models.later import Attendance, Notice
 from app.models.registration import Registration, RegistrationStatus
 from app.models.users import Role, User
 from app.security import hash_password
@@ -48,6 +49,90 @@ SUBJECT_TOPICS = [
     "Soft Skills & Aptitude",
 ]
 
+ATTENDANCE_PERIODS = range(1, 7)
+ATTENDANCE_WORKING_DAYS = 6
+
+
+def recent_working_days(today: date) -> list[date]:
+    """Return the six most recent Monday-Saturday dates before today."""
+    working_days: list[date] = []
+    candidate = today - timedelta(days=1)
+    while len(working_days) < ATTENDANCE_WORKING_DAYS:
+        if candidate.weekday() != 6:  # Sunday
+            working_days.append(candidate)
+        candidate -= timedelta(days=1)
+    return working_days
+
+
+def generate_attendance(
+    students: list[tuple[Student, int, int]],
+    today: date,
+) -> tuple[list[Attendance], Counter[str], dict[int, dict[str, int]]]:
+    """Create deterministic attendance rows and per-student status counts.
+
+    The tuple for each student contains the student object, section ID, and
+    mentor user ID. Attendance plans are assigned after a deterministic shuffle:
+    10% at-risk students receive 12 absences, 85% receive 2-7 absences, and the
+    remaining students receive 8 absences. Late marks replace a small number of
+    present periods and therefore still count as attended.
+    """
+    working_days = recent_working_days(today)
+    slots = [(day, period) for day in working_days for period in ATTENDANCE_PERIODS]
+    shuffled_students = students.copy()
+    random.shuffle(shuffled_students)
+
+    total_students = len(shuffled_students)
+    at_risk_count = round(total_students * 0.10)
+    normal_count = round(total_students * 0.85)
+    late_student_count = max(1, total_students // 20)
+    late_students = set(random.sample(range(total_students), late_student_count))
+
+    attendance_rows: list[Attendance] = []
+    status_counts: Counter[str] = Counter()
+    per_student_counts: dict[int, dict[str, int]] = {}
+
+    for position, (student, section_id, mentor_user_id) in enumerate(shuffled_students):
+        if position < at_risk_count:
+            absence_count = 12
+        elif position < at_risk_count + normal_count:
+            absence_count = random.randint(2, 7)
+        else:
+            absence_count = 8
+
+        absent_slots = set(random.sample(range(len(slots)), absence_count))
+        present_slots = [idx for idx in range(len(slots)) if idx not in absent_slots]
+        late_slot = (
+            random.choice(present_slots)
+            if position in late_students
+            else None
+        )
+
+        counts = Counter[str]()
+        for slot_index, (attendance_date, period) in enumerate(slots):
+            if slot_index in absent_slots:
+                status = "absent"
+            elif slot_index == late_slot:
+                status = "late"
+            else:
+                status = "present"
+
+            attendance_rows.append(
+                Attendance(
+                    student_id=student.id,
+                    section_id=section_id,
+                    date=attendance_date,
+                    period=period,
+                    status=status,
+                    marked_by_user_id=mentor_user_id,
+                )
+            )
+            counts[status] += 1
+            status_counts[status] += 1
+
+        per_student_counts[student.id] = dict(counts)
+
+    return attendance_rows, status_counts, per_student_counts
+
 
 def seed() -> None:
     """Reset sms.db and populate realistic Indian demo data."""
@@ -71,6 +156,7 @@ def seed() -> None:
     student_hash = hash_password("Student@123")
 
     sample_student_roll = None
+    attendance_students: list[tuple[Student, int, int]] = []
 
     with Session(engine) as session:
         # 1. Management user
@@ -252,6 +338,7 @@ def seed() -> None:
                             status="active",
                         )
                         session.add(student)
+                        attendance_students.append((student, section.id, mentor.id))
 
             # 5. Registrations per department: 6 pending, 1 correction, 1 rejected
             reg_plan = (
@@ -300,7 +387,16 @@ def seed() -> None:
                     )
                 )
 
-        # 6. 3 Notices
+        session.flush()
+
+        # 6. Historical attendance for the six most recent working days.
+        attendance_rows, attendance_status_counts, per_student_counts = generate_attendance(
+            attendance_students,
+            date.today(),
+        )
+        session.add_all(attendance_rows)
+
+        # 7. 3 Notices
         notices = [
             Notice(
                 title="Welcome to Academic Year 2026-27",
@@ -326,6 +422,28 @@ def seed() -> None:
         session.add_all(notices)
         session.commit()
 
+        total_periods = ATTENDANCE_WORKING_DAYS * len(ATTENDANCE_PERIODS)
+        at_risk_students = sum(
+            counts.get("present", 0) + counts.get("late", 0)
+            < total_periods * 0.75
+            for counts in per_student_counts.values()
+        )
+        attended_periods = (
+            attendance_status_counts["present"] + attendance_status_counts["late"]
+        )
+        overall_percentage = attended_periods / len(attendance_rows) * 100
+
+        print("\n=== ATTENDANCE SUMMARY ===")
+        print(f"Working days             : {ATTENDANCE_WORKING_DAYS}")
+        print(f"Periods per working day : {len(ATTENDANCE_PERIODS)}")
+        print(f"Total records generated : {len(attendance_rows)}")
+        print(f"Total students included : {len(attendance_students)}")
+        print(f"Present records         : {attendance_status_counts['present']}")
+        print(f"Absent records          : {attendance_status_counts['absent']}")
+        print(f"Late records            : {attendance_status_counts['late']}")
+        print(f"Students below 75%      : {at_risk_students}")
+        print(f"Overall attendance      : {overall_percentage:.2f}%")
+
         # Print demo logins table and record counts
         print("\n=== DEMO LOGINS (One per Role) ===")
         print(f"{'Role':<12} {'Username':<35} {'Password':<15}")
@@ -349,6 +467,7 @@ def seed() -> None:
             ("RollCounter", RollCounter),
             ("Registration", Registration),
             ("Notice", Notice),
+            ("Attendance", Attendance),
         ]
         for label, model in models_to_count:
             cnt = session.exec(select(func.count(model.id))).one()
