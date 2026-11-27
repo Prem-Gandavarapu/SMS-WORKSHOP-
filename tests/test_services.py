@@ -2,19 +2,29 @@ import sys
 import unittest
 from datetime import date
 from pathlib import Path
+from unittest.mock import patch
 
 # Allow running directly from the project root
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from sqlmodel import SQLModel, Session, create_engine
+from sqlmodel import SQLModel, Session, create_engine, select
 
 import app.models  # noqa: F401
-from app.models.academics import Batch, Department, MentorGroup, Section, Student
-from app.models.registration import Registration
+from app.models.academics import (
+    Batch,
+    Department,
+    MentorGroup,
+    RollCounter,
+    Section,
+    Student,
+)
+from app.models.registration import Registration, RegistrationStatus
 from app.models.users import Role, User
+from app.routers.hod import _hod_nav_links
 from app.services.approval import approve_registration
 from app.services.placement import pick_mentor_group
 from app.services.roll_number import next_roll_number
+from scripts.seed import academic_progress, recent_working_days
 
 
 class TestAdmissionServices(unittest.TestCase):
@@ -125,6 +135,62 @@ class TestAdmissionServices(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             approve_registration(self.session, reg, self.hod)
+
+    def test_approval_rejects_cross_department_registration(self):
+        ece = Department(code="ECE", name="Electronics and Communication Engineering")
+        self.session.add(ece)
+        self.session.commit()
+        reg = self._make_registration("REG-2026-00002", "Bhavna")
+        reg.department_id = ece.id
+        self.session.add(reg)
+        self.session.commit()
+
+        with self.assertRaises(ValueError):
+            approve_registration(self.session, reg, self.hod)
+
+        self.session.refresh(reg)
+        self.assertEqual(reg.status, RegistrationStatus.PENDING)
+        self.assertEqual(
+            self.session.exec(select(RollCounter)).all(),
+            [],
+        )
+
+    def test_approval_rolls_back_when_account_creation_fails(self):
+        reg = self._make_registration("REG-2026-00003", "Charan")
+
+        with patch(
+            "app.services.approval.hash_password",
+            side_effect=RuntimeError("simulated failure"),
+        ):
+            with self.assertRaises(RuntimeError):
+                approve_registration(self.session, reg, self.hod)
+
+        self.session.refresh(reg)
+        self.assertEqual(reg.status, RegistrationStatus.PENDING)
+        self.assertEqual(self.session.exec(select(RollCounter)).all(), [])
+        self.assertEqual(
+            self.session.exec(
+                select(User).where(User.username == "26CSE001")
+            ).all(),
+            [],
+        )
+
+    def test_academic_progress_uses_july_june_calendar(self):
+        self.assertEqual(academic_progress(2026, date(2026, 11, 27)), (1, 1))
+        self.assertEqual(academic_progress(2025, date(2026, 11, 27)), (2, 3))
+        self.assertEqual(academic_progress(2024, date(2026, 11, 27)), (3, 5))
+        self.assertEqual(academic_progress(2023, date(2026, 11, 27)), (4, 7))
+
+    def test_recent_working_days_excludes_today_and_sunday(self):
+        days = recent_working_days(date(2026, 11, 27))
+        self.assertEqual(len(days), 6)
+        self.assertTrue(all(day.weekday() != 6 for day in days))
+        self.assertNotIn(date(2026, 11, 27), days)
+
+    def test_hod_day_two_navigation_items_are_disabled(self):
+        links = _hod_nav_links("registrations", pending_count=2)
+        self.assertFalse(links[1].get("disabled", False))
+        self.assertTrue(all(link.get("disabled") for link in links[2:]))
 
 
 if __name__ == "__main__":

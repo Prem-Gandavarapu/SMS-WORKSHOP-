@@ -18,7 +18,15 @@ from app.models.academics import (
     Subject,
     TeachingAssignment,
 )
-from app.models.later import Attendance, Notice
+from app.models.later import (
+    Attendance,
+    Exam,
+    ExamSchedule,
+    HallTicket,
+    LeaveRequest,
+    Mark,
+    Notice,
+)
 from app.models.registration import Registration, RegistrationStatus
 from app.models.users import Role, User
 from app.security import hash_password
@@ -32,14 +40,6 @@ DEPARTMENTS = [
     ("CIVIL", "Civil Engineering"),
 ]
 
-# Admission year -> (current_year, current_semester) for Nov 2026
-BATCH_PROGRESS = {
-    2026: (1, 1),
-    2025: (2, 3),
-    2024: (3, 5),
-    2023: (4, 7),
-}
-
 SUBJECT_TOPICS = [
     "Engineering Mathematics",
     "Programming & Problem Solving",
@@ -51,6 +51,18 @@ SUBJECT_TOPICS = [
 
 ATTENDANCE_PERIODS = range(1, 7)
 ATTENDANCE_WORKING_DAYS = 6
+
+
+def academic_progress(admission_year: int, today: date) -> tuple[int, int]:
+    """Calculate year/semester using a July-June academic calendar."""
+    completed_years = today.year - admission_year
+    if today.month < 7:
+        completed_years -= 1
+
+    current_year = min(max(completed_years + 1, 1), 4)
+    semester_in_year = 1 if today.month >= 7 else 2
+    current_semester = (current_year - 1) * 2 + semester_in_year
+    return current_year, current_semester
 
 
 def recent_working_days(today: date) -> list[date]:
@@ -139,6 +151,7 @@ def seed() -> None:
     random.seed(42)
     fake = Faker("en_IN")
     Faker.seed(42)
+    current_date = date.today()
 
     # Delete existing sms.db so the script can be re-run cleanly anytime
     engine.dispose()
@@ -232,7 +245,8 @@ def seed() -> None:
                 subjects_by_year[yr] = year_subjects
             session.flush()
 
-            for adm_year, (cur_year, cur_sem) in BATCH_PROGRESS.items():
+            for adm_year in range(current_date.year, current_date.year - 4, -1):
+                cur_year, cur_sem = academic_progress(adm_year, current_date)
                 batch = Batch(
                     department_id=dept.id,
                     start_year=adm_year,
@@ -392,7 +406,7 @@ def seed() -> None:
         # 6. Historical attendance for the six most recent working days.
         attendance_rows, attendance_status_counts, per_student_counts = generate_attendance(
             attendance_students,
-            date.today(),
+            current_date,
         )
         session.add_all(attendance_rows)
 
@@ -445,7 +459,7 @@ def seed() -> None:
         print(f"Overall attendance      : {overall_percentage:.2f}%")
 
         # Print demo logins table and record counts
-        print("\n=== DEMO LOGINS (One per Role) ===")
+        print("\n=== DEMO-ONLY LOGINS (One per Role) ===")
         print(f"{'Role':<12} {'Username':<35} {'Password':<15}")
         print("-" * 64)
         print(f"{'management':<12} {'management@college.edu':<35} {'Admin@123':<15}")
@@ -468,6 +482,11 @@ def seed() -> None:
             ("Registration", Registration),
             ("Notice", Notice),
             ("Attendance", Attendance),
+            ("Mark", Mark),
+            ("Exam", Exam),
+            ("ExamSchedule", ExamSchedule),
+            ("HallTicket", HallTicket),
+            ("LeaveRequest", LeaveRequest),
         ]
         for label, model in models_to_count:
             cnt = session.exec(select(func.count(model.id))).one()

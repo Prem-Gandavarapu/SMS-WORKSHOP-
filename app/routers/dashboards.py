@@ -2,7 +2,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from sqlmodel import Session, select
 
 from app.database import get_session
@@ -326,7 +326,18 @@ def student_dashboard(
         else None
     )
     latest_notice = session.exec(
-        select(Notice).order_by(Notice.created_at.desc())
+        select(Notice)
+        .where(
+            or_(
+                Notice.audience == "all",
+                (Notice.audience == "department")
+                & (Notice.department_id == student.department_id),
+                (Notice.audience == "section")
+                & (Notice.section_id == student.section_id),
+                (Notice.audience == "role") & (Notice.role == Role.STUDENT.value),
+            )
+        )
+        .order_by(Notice.created_at.desc())
     ).first()
 
     first_name = student.full_name.split()[0] if student.full_name else "Student"

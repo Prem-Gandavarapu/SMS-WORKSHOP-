@@ -31,10 +31,10 @@ def _hod_nav_links(active_key: str, pending_count: int) -> list[dict]:
             "active": active_key == "registrations",
             "badge": pending_count if pending_count > 0 else None,
         },
-        {"label": "Students", "url": "/hod/students", "active": active_key == "students"},
-        {"label": "Mentor groups", "url": "/hod/mentor-groups", "active": active_key == "mentor_groups"},
-        {"label": "Subjects", "url": "/hod/subjects", "active": active_key == "subjects"},
-        {"label": "Leave requests", "url": "/hod/leaves", "active": active_key == "leaves"},
+        {"label": "Students", "url": "#", "disabled": True, "tag": "Day 2"},
+        {"label": "Mentor groups", "url": "#", "disabled": True, "tag": "Day 2"},
+        {"label": "Subjects", "url": "#", "disabled": True, "tag": "Day 2"},
+        {"label": "Leave requests", "url": "#", "disabled": True, "tag": "Day 2"},
     ]
 
 
