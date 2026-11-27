@@ -20,6 +20,7 @@ from app.models.academics import (
 from app.models.later import Attendance, LeaveRequest, Notice
 from app.models.registration import Registration, RegistrationStatus
 from app.models.users import Role, User
+from app.navigation import build_nav
 from app.services.attendance import (
     approved_leave_dates,
     calculate_attendance_summary,
@@ -120,12 +121,7 @@ def management_dashboard(
         chart_labels.append(dept.code)
         chart_values.append(stu_cnt)
 
-    nav_links = [
-        {"label": "Dashboard", "url": "/management", "active": True},
-        {"label": "Admin", "url": "/admin", "active": False},
-        {"label": "Notices", "url": "#", "disabled": True, "tag": "Day 2"},
-        {"label": "Exams", "url": "#", "disabled": True, "tag": "Day 3"},
-    ]
+    nav_links = build_nav(Role.MANAGEMENT, "dashboard")
 
     return templates.TemplateResponse(
         request,
@@ -214,19 +210,7 @@ def hod_dashboard(
             }
         )
 
-    nav_links = [
-        {"label": "Dashboard", "url": "/hod", "active": True},
-        {
-            "label": "Registrations",
-            "url": "/hod/registrations",
-            "active": False,
-            "badge": pending_count if pending_count > 0 else None,
-        },
-        {"label": "Students", "url": "#", "disabled": True, "tag": "Day 2"},
-        {"label": "Mentor groups", "url": "#", "disabled": True, "tag": "Day 2"},
-        {"label": "Subjects", "url": "#", "disabled": True, "tag": "Day 2"},
-        {"label": "Leave requests", "url": "#", "disabled": True, "tag": "Day 2"},
-    ]
+    nav_links = build_nav(Role.HOD, "dashboard", pending_count)
 
     return templates.TemplateResponse(
         request,
@@ -272,12 +256,7 @@ def mentor_dashboard(
             .order_by(Student.roll_number)
         ).all()
 
-    nav_links = [
-        {"label": "Dashboard", "url": "/mentor", "active": True},
-        {"label": "Mark attendance", "url": "#", "disabled": True, "tag": "Day 2"},
-        {"label": "Leave requests", "url": "#", "disabled": True, "tag": "Day 2"},
-        {"label": "Marks", "url": "#", "disabled": True, "tag": "Day 3"},
-    ]
+    nav_links = build_nav(Role.MENTOR, "dashboard")
 
     return templates.TemplateResponse(
         request,
@@ -332,11 +311,7 @@ def trainer_dashboard(
             }
         )
 
-    nav_links = [
-        {"label": "Dashboard", "url": "/trainer", "active": True},
-        {"label": "Enter marks", "url": "#", "disabled": True, "tag": "Day 3"},
-        {"label": "Schedule", "url": "#", "disabled": True, "tag": "Day 3"},
-    ]
+    nav_links = build_nav(Role.TRAINER, "dashboard")
 
     return templates.TemplateResponse(
         request,
@@ -387,13 +362,7 @@ def student_dashboard(
     first_name = student.full_name.split()[0] if student.full_name else "Student"
     attendance_data = _student_attendance_data(session, student)
 
-    nav_links = [
-        {"label": "Dashboard", "url": "/student", "active": True},
-        {"label": "Change password", "url": "/change-password", "active": False},
-        {"label": "Attendance", "url": "/student/attendance", "active": False},
-        {"label": "Marks", "url": "#", "disabled": True, "tag": "Day 3"},
-        {"label": "Hall ticket", "url": "#", "disabled": True, "tag": "Day 3"},
-    ]
+    nav_links = build_nav(Role.STUDENT, "dashboard")
 
     return templates.TemplateResponse(
         request,
@@ -441,13 +410,7 @@ def student_attendance(
         ]
         parsed_date = max(month_dates) if month_dates else today
 
-    nav_links = [
-        {"label": "Dashboard", "url": "/student", "active": False},
-        {"label": "Change password", "url": "/change-password", "active": False},
-        {"label": "Attendance", "url": "/student/attendance", "active": True},
-        {"label": "Marks", "url": "#", "disabled": True, "tag": "Day 3"},
-        {"label": "Hall ticket", "url": "#", "disabled": True, "tag": "Day 3"},
-    ]
+    nav_links = build_nav(Role.STUDENT, "attendance")
     return templates.TemplateResponse(
         request,
         "dashboards/student_attendance.html",

@@ -1,3 +1,4 @@
+import shutil
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -12,7 +13,7 @@ from app.admin import setup_admin
 from app.config import settings
 from app.database import create_db_and_tables, engine
 from app.models.academics import Department
-from app.routers import auth, dashboards, hod, register
+from app.routers import auth, coming_soon, dashboards, hod, mentor, register
 
 # Resolve paths relative to the app/ folder
 APP_DIR = Path(__file__).resolve().parent
@@ -64,6 +65,12 @@ app = FastAPI(title=settings.APP_NAME, lifespan=lifespan)
 # Mounted before /static so it takes precedence for /static/uploads paths.
 if settings.UPLOAD_DIR:
     Path(settings.UPLOAD_DIR).mkdir(parents=True, exist_ok=True)
+    # Demo applications reference bundled sample documents under /static/uploads/demo
+    shutil.copytree(
+        APP_DIR / "static" / "uploads" / "demo",
+        Path(settings.UPLOAD_DIR) / "demo",
+        dirs_exist_ok=True,
+    )
     app.mount("/static/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
 
 # Serve CSS, JS, and images from /static
@@ -77,6 +84,8 @@ app.include_router(auth.router)
 app.include_router(dashboards.router)
 app.include_router(register.router)
 app.include_router(hod.router)
+app.include_router(coming_soon.router)
+app.include_router(mentor.router)
 
 # Mount SQLAdmin at /admin
 setup_admin(app)
@@ -84,13 +93,17 @@ setup_admin(app)
 
 @app.exception_handler(StarletteHTTPException)
 async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
-    """Show a friendly HTML page for 403 Forbidden errors."""
-    if exc.status_code == 403:
+    """Show a friendly HTML page for 403 Forbidden and 404 Not Found errors."""
+    if exc.status_code in (403, 404):
+        title = "Access Denied" if exc.status_code == 403 else "Page Not Found"
+        detail = exc.detail
+        if exc.status_code == 404 and detail in (None, "Not Found"):
+            detail = "The page you are looking for does not exist."
         return templates.TemplateResponse(
             request,
             "403.html",
-            {"detail": exc.detail},
-            status_code=403,
+            {"code": exc.status_code, "title": title, "detail": detail},
+            status_code=exc.status_code,
         )
     from fastapi.exception_handlers import http_exception_handler
 

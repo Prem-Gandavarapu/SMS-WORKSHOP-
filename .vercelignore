@@ -3,6 +3,6 @@ __pycache__
 *.db
 .env
 tests
-app/static/uploads
+app/static/uploads/registrations
 .DS_Store
 .vscode

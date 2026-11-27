@@ -13,6 +13,7 @@ class Role(str, Enum):
     MENTOR = "mentor"
     TRAINER = "trainer"
     STUDENT = "student"
+    ADMIN = "admin"
 
 
 class User(SQLModel, table=True):

@@ -19,6 +19,7 @@
     {% if error %}
     <div class="alert alert-danger" role="alert">
         {{ error }}
+        <div class="small mt-1">For security, browsers clear file fields after an error. Please re-select your documents in step 3.</div>
     </div>
     {% endif %}
 
@@ -46,7 +47,7 @@
         </li>
     </ul>
 
-    <form method="post" action="/register" enctype="multipart/form-data" novalidate>
+    <form method="post" action="/register" enctype="multipart/form-data" id="regForm">
         <div class="tab-content">
             <!-- Step 1: Personal Details -->
             <div class="tab-pane fade show active" id="step-personal" role="tabpanel">
@@ -70,7 +71,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-medium">Phone (10 digits) *</label>
-                        <input type="text" class="form-control" name="phone" id="f_phone" value="{{ form.get('phone', '') }}" placeholder="9876543210" required>
+                        <input type="text" class="form-control" name="phone" id="f_phone" value="{{ form.get('phone', '') }}" placeholder="9876543210" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" title="Enter exactly 10 digits" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-medium">Email *</label>
@@ -176,6 +177,58 @@
 </div>
 
 <script>
+const STEP_TABS = ["tab-personal", "tab-academic", "tab-docs", "tab-review"];
+
+function paneFor(tabId) {
+    return document.querySelector(document.getElementById(tabId).dataset.bsTarget);
+}
+
+// Return the first invalid field in a step, or null when the step is complete
+function firstInvalid(tabId) {
+    const fields = paneFor(tabId).querySelectorAll("input, select, textarea");
+    return Array.from(fields).find(field => !field.checkValidity()) || null;
+}
+
+function showFieldError(tabId, field) {
+    const trigger = document.getElementById(tabId);
+    const report = () => { field.focus(); field.reportValidity(); };
+    if (trigger.classList.contains("active")) {
+        report();
+    } else {
+        trigger.addEventListener("shown.bs.tab", report, { once: true });
+        bootstrap.Tab.getOrCreateInstance(trigger).show();
+    }
+}
+
+// Block moving forward (Next buttons or tab headers) past a step with missing fields
+document.querySelectorAll("#regTabs button[data-bs-toggle='pill']").forEach(trigger => {
+    trigger.addEventListener("show.bs.tab", event => {
+        const from = STEP_TABS.indexOf(event.relatedTarget ? event.relatedTarget.id : "");
+        const to = STEP_TABS.indexOf(event.target.id);
+        for (let i = Math.max(from, 0); i < to; i++) {
+            const field = firstInvalid(STEP_TABS[i]);
+            if (field) {
+                event.preventDefault();
+                showFieldError(STEP_TABS[i], field);
+                return;
+            }
+        }
+        if (event.target.id === "tab-review") fillReview();
+    });
+});
+
+// On submit, jump to the first step that still has a problem instead of failing silently
+document.getElementById("regForm").addEventListener("submit", event => {
+    for (const tabId of STEP_TABS) {
+        const field = firstInvalid(tabId);
+        if (field) {
+            event.preventDefault();
+            showFieldError(tabId, field);
+            return;
+        }
+    }
+});
+
 function goTab(tabId) {
     const trigger = document.getElementById(tabId);
     if (trigger) {

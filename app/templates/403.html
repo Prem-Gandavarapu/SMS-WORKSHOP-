@@ -1,17 +1,19 @@
 {% extends "base_public.html" %}
 
-{% block title %}Access Denied - GIST SMS{% endblock %}
+{% block title %}{{ title or "Access Denied" }} - GIST SMS{% endblock %}
 
 {% block content %}
 <div class="card shadow-sm p-4 p-md-5 bg-white text-center">
-    <h1 class="display-5 fw-bold text-danger mb-2">403</h1>
-    <h5 class="fw-semibold mb-3">Access Denied</h5>
+    <h1 class="display-5 fw-bold {% if code == 404 %}text-muted{% else %}text-danger{% endif %} mb-2">{{ code or 403 }}</h1>
+    <h5 class="fw-semibold mb-3">{{ title or "Access Denied" }}</h5>
     <p class="text-muted mb-4">
         {{ detail or "You do not have permission to view this page." }}
     </p>
     <div class="d-flex justify-content-center gap-2">
-        <a href="/login" class="btn btn-primary">Go to Login</a>
+        <a href="/login" class="btn btn-navy">Go to Home</a>
+        {% if code != 404 %}
         <a href="/logout" class="btn btn-outline-secondary">Logout</a>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

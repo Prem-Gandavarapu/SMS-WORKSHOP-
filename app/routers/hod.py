@@ -13,6 +13,7 @@ from app.deps import require_role
 from app.models.academics import Department
 from app.models.registration import Registration, RegistrationStatus
 from app.models.users import Role, User
+from app.navigation import build_nav
 from app.services.approval import approve_registration
 
 router = APIRouter(prefix="/hod", tags=["hod"])
@@ -23,19 +24,7 @@ templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 def _hod_nav_links(active_key: str, pending_count: int) -> list[dict]:
     """Build the sidebar menu for HOD pages."""
-    return [
-        {"label": "Dashboard", "url": "/hod", "active": active_key == "dashboard"},
-        {
-            "label": "Registrations",
-            "url": "/hod/registrations",
-            "active": active_key == "registrations",
-            "badge": pending_count if pending_count > 0 else None,
-        },
-        {"label": "Students", "url": "#", "disabled": True, "tag": "Day 2"},
-        {"label": "Mentor groups", "url": "#", "disabled": True, "tag": "Day 2"},
-        {"label": "Subjects", "url": "#", "disabled": True, "tag": "Day 2"},
-        {"label": "Leave requests", "url": "#", "disabled": True, "tag": "Day 2"},
-    ]
+    return build_nav(Role.HOD, active_key, pending_count)
 
 
 def _get_hod_department(session: Session, hod_user: User) -> Department:

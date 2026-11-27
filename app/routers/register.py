@@ -32,8 +32,10 @@ def _calculate_age(dob: date, today: date) -> int:
     return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
 
 
-async def _validate_upload(upload: UploadFile, label: str) -> tuple[bytes, str]:
+async def _validate_upload(upload: Optional[UploadFile], label: str) -> tuple[bytes, str]:
     """Read and validate an uploaded document's extension and 2 MB size limit."""
+    if upload is None or not (upload.filename or "").strip():
+        raise ValueError(f"{label} is required.")
     filename = (upload.filename or "").strip()
     ext = Path(filename).suffix.lower()
     if not filename or ext not in ALLOWED_EXTENSIONS:
@@ -57,7 +59,7 @@ def _validate_registration_fields(
     phone: str,
     email: str,
     parent_name: str,
-    department_id: int,
+    department_id: str,
     quota: str,
     entrance_rank_str: str,
     tenth_percent_str: str,
@@ -86,7 +88,11 @@ def _validate_registration_fields(
     if _calculate_age(dob_val, date.today()) < 16:
         raise ValueError("Applicant must be at least 16 years old.")
 
-    department = session.get(Department, department_id)
+    department = (
+        session.get(Department, int(department_id))
+        if str(department_id).strip().isdigit()
+        else None
+    )
     if not department:
         raise ValueError("Please select a valid branch.")
 
@@ -118,7 +124,7 @@ def _validate_registration_fields(
         "phone": clean_phone,
         "email": clean_email,
         "parent_name": clean_parent,
-        "department_id": department_id,
+        "department_id": department.id,
         "quota": clean_quota,
         "entrance_rank": entrance_rank,
         "tenth_percent": tenth_val,
@@ -146,14 +152,14 @@ async def register_submit(
     phone: str = Form(""),
     email: str = Form(""),
     parent_name: str = Form(""),
-    department_id: int = Form(0),
+    department_id: str = Form(""),
     quota: str = Form(""),
     entrance_rank: str = Form(""),
     tenth_percent: str = Form(""),
     inter_percent: str = Form(""),
-    photo: UploadFile = File(...),
-    marks_memo: UploadFile = File(...),
-    id_proof: UploadFile = File(...),
+    photo: Optional[UploadFile] = File(None),
+    marks_memo: Optional[UploadFile] = File(None),
+    id_proof: Optional[UploadFile] = File(None),
     session: Session = Depends(get_session),
 ):
     """Validate form inputs and uploads, save registration, and redirect."""
@@ -319,7 +325,7 @@ async def register_edit_submit(
     phone: str = Form(""),
     email: str = Form(""),
     parent_name: str = Form(""),
-    department_id: int = Form(0),
+    department_id: str = Form(""),
     quota: str = Form(""),
     entrance_rank: str = Form(""),
     tenth_percent: str = Form(""),

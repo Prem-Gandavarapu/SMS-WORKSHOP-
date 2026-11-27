@@ -183,6 +183,17 @@ def seed() -> None:
             role=Role.MANAGEMENT,
         )
         session.add(mgmt)
+
+        # Separate system administrator for the /admin database panel
+        session.add(
+            User(
+                username="admin@college.edu",
+                full_name="System Administrator",
+                email="admin@college.edu",
+                password_hash=hash_password("SuperAdmin@123"),
+                role=Role.ADMIN,
+            )
+        )
         session.flush()
 
         # 2. 5 Departments + 5 HODs
@@ -464,6 +475,7 @@ def seed() -> None:
         print("\n=== DEMO-ONLY LOGINS (One per Role) ===")
         print(f"{'Role':<12} {'Username':<35} {'Password':<15}")
         print("-" * 64)
+        print(f"{'admin':<12} {'admin@college.edu':<35} {'SuperAdmin@123':<15}")
         print(f"{'management':<12} {'management@college.edu':<35} {'Admin@123':<15}")
         print(f"{'hod':<12} {'hod.cse@college.edu':<35} {'Hod@123':<15}")
         print(f"{'mentor':<12} {'mentor.cse.2026a@college.edu':<35} {'Mentor@123':<15}")

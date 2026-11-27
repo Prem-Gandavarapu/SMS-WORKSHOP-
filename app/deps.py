@@ -35,6 +35,9 @@ def require_role(*roles: Role):
     """Dependency factory that restricts a route to specific user roles."""
 
     def role_checker(current_user: User = Depends(get_current_user)) -> User:
+        # Accounts with a temporary password must set a new one before using the app
+        if current_user.must_change_password:
+            raise HTTPException(status_code=303, headers={"Location": "/change-password"})
         if current_user.role not in roles:
             raise HTTPException(
                 status_code=403,

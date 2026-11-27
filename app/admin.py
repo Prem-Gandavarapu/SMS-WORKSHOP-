@@ -30,7 +30,7 @@ from app.security import verify_password
 
 
 class AdminAuth(AuthenticationBackend):
-    """Protect /admin so only active Management users can sign in."""
+    """Protect /admin so only active Admin users can sign in."""
 
     async def login(self, request: Request) -> bool:
         form = await request.form()
@@ -44,7 +44,7 @@ class AdminAuth(AuthenticationBackend):
             if (
                 user
                 and user.is_active
-                and user.role == Role.MANAGEMENT
+                and user.role == Role.ADMIN
                 and verify_password(password, user.password_hash)
             ):
                 request.session.update({"admin_user_id": user.id})
@@ -63,7 +63,7 @@ class AdminAuth(AuthenticationBackend):
         with Session(engine) as session:
             user = session.get(User, int(admin_user_id))
             return bool(
-                user and user.is_active and user.role == Role.MANAGEMENT
+                user and user.is_active and user.role == Role.ADMIN
             )
 
 

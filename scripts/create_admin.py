@@ -12,10 +12,10 @@ from app.security import hash_password
 
 
 def main() -> None:
-    """Create a temporary management admin user for testing login."""
+    """Create the system administrator account for the /admin panel if it is missing."""
     create_db_and_tables()
 
-    email = "management@college.edu"
+    email = "admin@college.edu"
     with Session(engine) as session:
         existing = session.exec(select(User).where(User.username == email)).first()
         if existing:
@@ -24,16 +24,16 @@ def main() -> None:
 
         admin = User(
             username=email,
-            full_name="College Management",
+            full_name="System Administrator",
             email=email,
-            password_hash=hash_password("Admin@123"),
-            role=Role.MANAGEMENT,
+            password_hash=hash_password("SuperAdmin@123"),
+            role=Role.ADMIN,
             is_active=True,
             must_change_password=False,
         )
         session.add(admin)
         session.commit()
-        print(f"Created management user: {email} / Admin@123")
+        print(f"Created admin user: {email} / SuperAdmin@123")
 
 
 if __name__ == "__main__":

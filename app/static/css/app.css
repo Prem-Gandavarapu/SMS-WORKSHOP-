@@ -20,66 +20,142 @@ body {
     }
 }
 
+/* Theme tokens: map Bootstrap's own variables to the GIST orange palette so
+   every state (hover, focus, active, disabled) stays on-brand. */
+:root {
+    --gist-orange: #e45c04;
+    --gist-orange-dark: #c84e03;
+    --gist-orange-darker: #a84102;
+    --gist-orange-soft: #fff1e6;
+    --gist-orange-rgb: 228, 92, 4;
+    --bs-primary: #e45c04;
+    --bs-primary-rgb: 228, 92, 4;
+    --bs-link-color: #c84e03;
+    --bs-link-color-rgb: 200, 78, 3;
+    --bs-link-hover-color: #e45c04;
+    --bs-link-hover-color-rgb: 228, 92, 4;
+    --bs-focus-ring-color: rgba(228, 92, 4, 0.25);
+}
+
 .bg-navy {
-    background-color: #e45c04;
+    background-color: var(--gist-orange);
 }
 
-.btn-navy {
-    background-color: #e45c04;
-    border-color: #e45c04;
-    color: #ffffff;
+/* Primary actions (btn-navy and btn-primary are identical) */
+.btn-navy,
+.btn-primary {
+    --bs-btn-color: #ffffff;
+    --bs-btn-bg: var(--gist-orange);
+    --bs-btn-border-color: var(--gist-orange);
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-bg: var(--gist-orange-dark);
+    --bs-btn-hover-border-color: var(--gist-orange-dark);
+    --bs-btn-focus-shadow-rgb: var(--gist-orange-rgb);
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-bg: var(--gist-orange-darker);
+    --bs-btn-active-border-color: var(--gist-orange-darker);
+    --bs-btn-disabled-color: #ffffff;
+    --bs-btn-disabled-bg: var(--gist-orange);
+    --bs-btn-disabled-border-color: var(--gist-orange);
 }
 
-.btn-navy:hover,
-.btn-navy:focus {
-    background-color: #c84e03;
-    border-color: #c84e03;
-    color: #ffffff;
+/* Secondary actions in the theme colour */
+.btn-outline-primary {
+    --bs-btn-color: var(--gist-orange-dark);
+    --bs-btn-border-color: var(--gist-orange);
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-bg: var(--gist-orange);
+    --bs-btn-hover-border-color: var(--gist-orange);
+    --bs-btn-focus-shadow-rgb: var(--gist-orange-rgb);
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-bg: var(--gist-orange-dark);
+    --bs-btn-active-border-color: var(--gist-orange-dark);
+    --bs-btn-disabled-color: var(--gist-orange);
+    --bs-btn-disabled-border-color: var(--gist-orange);
 }
 
-/* Keep Bootstrap actions and links in the shared orange theme. */
-.btn-primary,
-.btn-info,
-.btn-success,
-.btn-warning,
-.btn-danger {
-    background-color: #e45c04;
-    border-color: #e45c04;
-    color: #ffffff;
+/* Semantic buttons keep their meaning (approve = green, reject = red) */
+.btn-success {
+    --bs-btn-bg: #157347;
+    --bs-btn-border-color: #157347;
+    --bs-btn-hover-bg: #11603b;
+    --bs-btn-hover-border-color: #11603b;
+    --bs-btn-active-bg: #0e4f31;
+    --bs-btn-active-border-color: #0e4f31;
 }
 
-.btn-primary:hover,
-.btn-primary:focus,
-.btn-info:hover,
-.btn-info:focus,
-.btn-success:hover,
-.btn-success:focus,
-.btn-warning:hover,
-.btn-warning:focus,
-.btn-danger:hover,
-.btn-danger:focus {
-    background-color: #c84e03;
-    border-color: #c84e03;
-    color: #ffffff;
+.btn-outline-danger {
+    --bs-btn-color: #b02a37;
+    --bs-btn-border-color: #b02a37;
+    --bs-btn-hover-bg: #b02a37;
+    --bs-btn-hover-border-color: #b02a37;
+    --bs-btn-active-bg: #8f222d;
+    --bs-btn-active-border-color: #8f222d;
 }
 
-.bg-info,
-.bg-primary {
-    background-color: #e45c04 !important;
+/* Form controls: orange focus ring and checked state instead of Bootstrap blue */
+.form-control:focus,
+.form-select:focus {
+    border-color: #f3a46f;
+    box-shadow: 0 0 0 0.25rem rgba(228, 92, 4, 0.15);
+}
+
+.form-check-input:checked {
+    background-color: var(--gist-orange);
+    border-color: var(--gist-orange);
+}
+
+.form-check-input:focus {
+    border-color: #f3a46f;
+    box-shadow: 0 0 0 0.25rem rgba(228, 92, 4, 0.15);
+}
+
+/* Tabs */
+.nav-tabs .nav-link {
+    color: #6b7280;
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--gist-orange-dark);
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--gist-orange-dark);
+    font-weight: 600;
+    border-top: 2px solid var(--gist-orange);
+}
+
+/* Pills outside the sidebar (registration steps); sidebar rules are more specific */
+.nav-pills {
+    --bs-nav-pills-link-active-bg: var(--gist-orange);
+    --bs-nav-pills-link-active-color: #ffffff;
+    --bs-nav-link-color: var(--gist-orange-dark);
+    --bs-nav-link-hover-color: var(--gist-orange);
+}
+
+.progress-bar {
+    --bs-progress-bar-bg: var(--gist-orange);
+}
+
+/* Status colour for the "sent back" progress bar */
+.bg-info {
+    background-color: var(--gist-orange) !important;
 }
 
 .alert-info {
-    background-color: #fff1e6;
+    background-color: var(--gist-orange-soft);
     border-color: #f6c29d;
     color: #9a3d00;
 }
 
-a:not(.btn) {
-    color: #c84e03;
+/* :where() keeps specificity at zero so component link colours
+   (login register link, attendance calendar days) are not overridden */
+:where(a:not(.btn)) {
+    color: var(--gist-orange-dark);
 }
 
-a:not(.btn):hover {
-    color: #e45c04;
+:where(a:not(.btn)):hover {
+    color: var(--gist-orange);
 }
 
 .sidebar-link {
@@ -101,6 +177,10 @@ a:not(.btn):hover {
     color: #c84e03;
     background-color: #ffffff;
     box-shadow: 0 2px 8px rgba(124, 47, 0, 0.18);
+}
+
+.sidebar .border-bottom {
+    border-color: rgba(255, 255, 255, 0.25) !important;
 }
 
 .sidebar .badge {
@@ -343,10 +423,10 @@ a:not(.btn):hover {
     border-radius: 1.25rem;
     overflow: hidden;
     box-shadow:
-        0 4px 6px -1px rgba(11, 33, 80, 0.07),
-        0 10px 30px -5px rgba(11, 33, 80, 0.12),
+        0 4px 6px -1px rgba(124, 47, 0, 0.06),
+        0 10px 30px -5px rgba(124, 47, 0, 0.10),
         0 1px 3px rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(11, 33, 80, 0.06);
+    border: 1px solid rgba(124, 47, 0, 0.08);
 }
 
 /* Orange branding panel */
@@ -356,7 +436,6 @@ a:not(.btn):hover {
     padding: 2.5rem;
     position: relative;
     overflow: hidden;
-    border-top: 6px solid #e45c04;
 }
 
 /* Subtle decorative circles on the left panel */
@@ -581,7 +660,7 @@ a:not(.btn):hover {
    RESPONSIVE ADJUSTMENTS
    =================================== */
 
-/* Large desktops (1440px+) */
+/* Large desktops (1200px+) */
 @media (min-width: 1200px) {
     .public-wrapper-wide {
         max-width: 920px;
@@ -593,10 +672,6 @@ a:not(.btn):hover {
 
     .login-right {
         padding: 3rem;
-    }
-
-    .login-heading {
-        font-size: 2.15rem;
     }
 }
 
@@ -663,3 +738,121 @@ a:not(.btn):hover {
         font-size: 0.72rem;
     }
 }
+
+
+/* ===================================
+   UPCOMING FEATURES ("Under progress")
+   =================================== */
+
+.soon-badge {
+    background-color: var(--gist-orange-soft);
+    color: var(--gist-orange-dark);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.sidebar .soon-badge {
+    background-color: rgba(255, 255, 255, 0.22) !important;
+    color: #ffffff !important;
+}
+
+.sidebar .nav-link.active .soon-badge {
+    background-color: var(--gist-orange-soft) !important;
+    color: var(--gist-orange-dark) !important;
+}
+
+.coming-soon-card {
+    max-width: 560px;
+    margin: 2rem auto;
+    border-top: 4px solid var(--gist-orange);
+}
+
+.coming-soon-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: var(--gist-orange-soft);
+    color: var(--gist-orange);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.coming-soon-status {
+    display: inline-block;
+    background-color: var(--gist-orange-soft);
+    color: var(--gist-orange-dark);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.3rem 0.8rem;
+}
+
+
+/* ===================================
+   MENTOR: MARK ATTENDANCE
+   =================================== */
+
+.period-chip {
+    display: inline-block;
+    min-width: 2.6rem;
+    padding: 0.2rem 0.55rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 999px;
+    background: #f9fafb;
+    color: #6b7280 !important;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+}
+
+.period-chip:hover {
+    border-color: var(--gist-orange);
+}
+
+.period-chip-done {
+    background: #e8f6ef;
+    border-color: #b7e1c8;
+    color: #146c43 !important;
+}
+
+.period-chip-current {
+    border-color: var(--gist-orange);
+    box-shadow: 0 0 0 2px rgba(228, 92, 4, 0.18);
+}
+
+/* Present / Absent / Late toggles keep their meaning in colour */
+.attendance-toggle .btn {
+    min-width: 4.6rem;
+    border: 1px solid #d1d5db;
+    color: #4b5563;
+    background: #ffffff;
+}
+
+.attendance-toggle .btn-check:checked + .attendance-btn-present {
+    background: #157347;
+    border-color: #157347;
+    color: #ffffff;
+}
+
+.attendance-toggle .btn-check:checked + .attendance-btn-absent {
+    background: #b02a37;
+    border-color: #b02a37;
+    color: #ffffff;
+}
+
+.attendance-toggle .btn-check:checked + .attendance-btn-late {
+    background: #f0ad4e;
+    border-color: #f0ad4e;
+    color: #3d2a00;
+}
+
+.attendance-toggle .btn-check:focus-visible + .btn {
+    box-shadow: 0 0 0 0.2rem rgba(228, 92, 4, 0.25);
+}
+
+.attendance-count-present { color: #157347; font-weight: 600; }
+.attendance-count-absent { color: #b02a37; font-weight: 600; }
+.attendance-count-late { color: #8a5a00; font-weight: 600; }

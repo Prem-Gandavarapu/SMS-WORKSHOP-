@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if not group %}
+<div class="card bg-white p-4 text-center">
+    <h5 class="fw-bold mb-2">No Mentor Group Assigned</h5>
+    <p class="text-muted mb-3">Ask your HOD to assign you a mentor group before marking attendance.</p>
+    <div><a href="/mentor" class="btn btn-navy">&larr; Back to Dashboard</a></div>
+</div>
+{% else %}
+
+{% if saved %}
+<div class="alert alert-success" role="status">
+    Attendance {{ "updated" if saved == "updated" else "saved" }} for
+    <strong>Period {{ period }}</strong> on <strong>{{ selected_date.strftime("%a, %d %b %Y") }}</strong>.
+</div>
+{% endif %}
+{% if error %}
+<div class="alert alert-danger" role="alert">{{ error }}</div>
+{% endif %}
+
+<!-- Choose date and period -->
+<div class="card bg-white p-4 mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+        <div>
+            <h5 class="fw-bold mb-1">{{ group.name }}</h5>
+            <div class="text-muted small">{{ section_label }} · {{ rows | length }} students</div>
+        </div>
+        <a href="/mentor" class="btn btn-outline-secondary btn-sm">&larr; Back to Dashboard</a>
+    </div>
+
+    <form method="get" action="/mentor/attendance" class="row g-2 align-items-end">
+        <div class="col-sm-4 col-lg-3">
+            <label for="date" class="form-label small fw-medium mb-1">Date</label>
+            <input type="date" class="form-control" id="date" name="date"
+                   value="{{ selected_date.isoformat() }}"
+                   min="{{ min_date.isoformat() }}" max="{{ today.isoformat() }}" required>
+        </div>
+        <div class="col-sm-5 col-lg-6">
+            <label for="period" class="form-label small fw-medium mb-1">Period</label>
+            <select class="form-select" id="period" name="period">
+                {% for opt in periods %}
+                <option value="{{ opt.period }}" {% if opt.period == period %}selected{% endif %}>
+                    {{ opt.label }}{% if opt.period in marked_periods %} ✓{% endif %}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-sm-3 col-lg-3 d-grid">
+            <button type="submit" class="btn btn-outline-primary">Load</button>
+        </div>
+    </form>
+
+    <!-- Period progress for the selected day -->
+    <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+        <span class="small text-muted me-1">{{ selected_date.strftime("%a, %d %b") }}:</span>
+        {% for opt in periods %}
+        <a href="/mentor/attendance?date={{ selected_date.isoformat() }}&period={{ opt.period }}"
+           class="period-chip {% if opt.period in marked_periods %}period-chip-done{% endif %} {% if opt.period == period %}period-chip-current{% endif %}"
+           title="{{ opt.label }}{% if opt.period in marked_periods %} (marked){% else %} (not marked){% endif %}">
+            P{{ opt.period }}{% if opt.period in marked_periods %} ✓{% endif %}
+        </a>
+        {% endfor %}
+        <span class="small text-muted ms-1">{{ marked_periods | length }} of {{ periods | length }} marked</span>
+    </div>
+</div>
+
+<!-- Roster -->
+<div class="card bg-white p-4">
+    {% if date_error %}
+    <div class="alert alert-warning mb-0">{{ date_error }}</div>
+    {% elif not rows %}
+    <div class="text-center text-muted py-4">No students in this mentor group yet.</div>
+    {% else %}
+    <form method="post" action="/mentor/attendance" id="attendanceForm">
+        <input type="hidden" name="date" value="{{ selected_date.isoformat() }}">
+        <input type="hidden" name="period" value="{{ period }}">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <div>
+                <h5 class="fw-bold mb-1">Period {{ period }}{% for opt in periods if opt.period == period and opt.subject %} · {{ opt.subject.code }} {{ opt.subject.name }}{% endfor %}</h5>
+                {% if already_marked %}
+                <div class="small text-muted">Already marked. Saving will update the existing record.</div>
+                {% else %}
+                <div class="small text-muted">Everyone starts as Present. Change only the exceptions.</div>
+                {% endif %}
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-mark-all="present">All present</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-mark-all="absent">All absent</button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 3rem;">#</th>
+                        <th>Roll Number</th>
+                        <th>Full Name</th>
+                        <th class="text-end">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                    {% set sid = row.student.id %}
+                    <tr>
+                        <td class="text-muted">{{ loop.index }}</td>
+                        <td class="fw-semibold">{{ row.student.roll_number }}</td>
+                        <td>
+                            {{ row.student.full_name }}
+                            {% if row.on_leave %}<span class="badge soon-badge ms-1">On leave</span>{% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group btn-group-sm attendance-toggle" role="group" aria-label="Attendance for {{ row.student.roll_number }}">
+                                {% for value, label in [("present", "Present"), ("absent", "Absent"), ("late", "Late")] %}
+                                <input type="radio" class="btn-check" name="status_{{ sid }}" id="s{{ sid }}_{{ value }}"
+                                       value="{{ value }}" autocomplete="off" {% if row.status == value %}checked{% endif %} required>
+                                <label class="btn attendance-btn-{{ value }}" for="s{{ sid }}_{{ value }}">{{ label }}</label>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3 pt-3 border-top">
+            <div class="small" id="attendanceCounts" aria-live="polite"></div>
+            <button type="submit" class="btn btn-navy px-4 fw-semibold">
+                {{ "Update attendance" if already_marked else "Save attendance" }}
+            </button>
+        </div>
+    </form>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    // Changing the date or period reloads the roster straight away
+    ["date", "period"].forEach(id => {
+        const field = document.getElementById(id);
+        if (field) field.addEventListener("change", event => event.target.form.submit());
+    });
+
+    const form = document.getElementById("attendanceForm");
+    if (!form) return;
+    const counts = document.getElementById("attendanceCounts");
+
+    function updateCounts() {
+        const tally = { present: 0, absent: 0, late: 0 };
+        form.querySelectorAll("input.btn-check:checked").forEach(input => { tally[input.value] += 1; });
+        counts.innerHTML =
+            `<span class="attendance-count-present">Present ${tally.present}</span> · ` +
+            `<span class="attendance-count-absent">Absent ${tally.absent}</span> · ` +
+            `<span class="attendance-count-late">Late ${tally.late}</span>`;
+    }
+
+    form.querySelectorAll("[data-mark-all]").forEach(button => {
+        button.addEventListener("click", () => {
+            const value = button.dataset.markAll;
+            form.querySelectorAll(`input.btn-check[value="${value}"]`).forEach(input => { input.checked = true; });
+            updateCounts();
+        });
+    });
+    form.addEventListener("change", updateCounts);
+    updateCounts();
+})();
+</script>
+{% endblock %}

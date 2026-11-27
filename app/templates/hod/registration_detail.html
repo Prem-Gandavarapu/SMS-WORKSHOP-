@@ -41,7 +41,7 @@
             <div class="row g-3 align-items-center">
                 <div class="col-md-4 text-center">
                     <img src="{{ reg.photo_path }}" alt="Applicant Photo" class="img-thumbnail mb-2" style="max-height: 160px;">
-                    <div><a href="{{ reg.photo_path }}" target="_blank" class="btn btn-outline-secondary btn-sm">Open Photo</a></div>
+                    <div><a href="{{ reg.photo_path }}" target="_blank" class="btn btn-outline-primary btn-sm">Open Photo</a></div>
                 </div>
                 <div class="col-md-8 d-flex flex-column gap-2">
                     <a href="{{ reg.marks_memo_path }}" target="_blank" class="btn btn-outline-primary text-start">
@@ -61,7 +61,8 @@
             <h5 class="fw-bold mb-3">HOD Decision</h5>
 
             {% if reg.status.value == "pending" %}
-            <form method="post" action="/hod/registrations/{{ reg.id }}/approve" class="mb-3">
+            <form method="post" action="/hod/registrations/{{ reg.id }}/approve" class="mb-3"
+                  onsubmit='return confirm({{ ("Approve " ~ reg.full_name ~ " and create their student account?")|tojson }});'>
                 <button type="submit" class="btn btn-success w-100 fw-semibold">
                     Approve &amp; Generate Roll Number
                 </button>
@@ -75,14 +76,21 @@
                 <button type="submit" class="btn btn-outline-primary w-100 btn-sm">Send Back for Correction</button>
             </form>
 
-            <form method="post" action="/hod/registrations/{{ reg.id }}/reject">
+            <form method="post" action="/hod/registrations/{{ reg.id }}/reject"
+                  onsubmit="return confirm('Reject this application? This cannot be undone.');">
                 <label class="form-label small fw-medium">Reject Application (Remarks required)</label>
                 <textarea name="remarks" class="form-control form-control-sm mb-2" rows="2" placeholder="Reason for rejection" required></textarea>
                 <button type="submit" class="btn btn-outline-danger w-100 btn-sm">Reject Application</button>
             </form>
             {% else %}
             <div class="alert alert-secondary mb-0">
-                This application has already been <strong>{{ reg.status.value }}</strong> and cannot be approved again.
+                {% if reg.status.value == "correction" %}
+                This application was <strong>sent back for correction</strong>. It will return to Pending once the applicant resubmits it.
+                {% elif reg.status.value == "approved" %}
+                This application has been <strong>approved</strong>.
+                {% else %}
+                This application has been <strong>rejected</strong>.
+                {% endif %}
                 {% if reg.hod_remarks %}
                 <hr class="my-2">
                 <div class="small"><strong>Remarks:</strong> {{ reg.hod_remarks }}</div>

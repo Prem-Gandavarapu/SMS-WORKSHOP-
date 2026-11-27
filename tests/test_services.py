@@ -187,10 +187,15 @@ class TestAdmissionServices(unittest.TestCase):
         self.assertTrue(all(day.weekday() != 6 for day in days))
         self.assertNotIn(date(2026, 11, 27), days)
 
-    def test_hod_day_two_navigation_items_are_disabled(self):
+    def test_hod_upcoming_navigation_items_open_coming_soon_pages(self):
         links = _hod_nav_links("registrations", pending_count=2)
-        self.assertFalse(links[1].get("disabled", False))
-        self.assertTrue(all(link.get("disabled") for link in links[2:]))
+        self.assertEqual(links[1]["url"], "/hod/registrations")
+        self.assertTrue(links[1]["active"])
+        self.assertEqual(links[1]["badge"], 2)
+        upcoming = links[2:]
+        self.assertTrue(upcoming)
+        self.assertTrue(all(link["url"].startswith("/coming-soon/") for link in upcoming))
+        self.assertTrue(all(link["tag"] == "Soon" for link in upcoming))
 
 
 if __name__ == "__main__":
