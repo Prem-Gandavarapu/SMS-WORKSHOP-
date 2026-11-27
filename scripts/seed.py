@@ -153,11 +153,13 @@ def seed() -> None:
     Faker.seed(42)
     current_date = date.today()
 
-    # Delete existing sms.db so the script can be re-run cleanly anytime
+    # Delete the configured SQLite file so the script can be re-run cleanly anytime
     engine.dispose()
-    db_path = Path("sms.db")
-    if db_path.exists():
-        db_path.unlink()
+    db_file = engine.url.database if engine.url.get_backend_name() == "sqlite" else None
+    if db_file and db_file != ":memory:":
+        db_path = Path(db_file)
+        if db_path.exists():
+            db_path.unlink()
 
     create_db_and_tables()
 
